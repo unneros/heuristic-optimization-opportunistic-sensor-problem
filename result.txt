@@ -1,0 +1,258 @@
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+Starting evaluation on m = 2, k = 2
+-----------------------------------------------------------------
+Running on file 10x12_10_0.50.txt
+Finished map 10x12_10_0.50.txt with greedy = 5 and GA = 5 and Optimal = 5
+Optimal result time: 247352600
+Greedy elapsed time 20920499
+GA elapsed time 22160974100
+-----------------------------------------------------------------
+Running on file 10x12_10_1.00.txt
+Finished map 10x12_10_1.00.txt with greedy = 8 and GA = 9 and Optimal = 9
+Optimal result time: 124997899
+Greedy elapsed time 21133901
+GA elapsed time 24169378401
+-----------------------------------------------------------------
+Running on file 10x12_10_2.00.txt
+Finished map 10x12_10_2.00.txt with greedy = 9 and GA = 10 and Optimal = 10
+Optimal result time: 136983101
+Greedy elapsed time 34010599
+GA elapsed time 27946492801
+-----------------------------------------------------------------
+Running on file 10x12_20_0.50.txt
+Finished map 10x12_20_0.50.txt with greedy = 10 and GA = 10 and Optimal = 10
+Optimal result time: 574872500
+Greedy elapsed time 13470299
+GA elapsed time 23966327100
+-----------------------------------------------------------------
+Running on file 10x12_20_1.00.txt
+Finished map 10x12_20_1.00.txt with greedy = 9 and GA = 12 and Optimal = 14
+Optimal result time: 2785614800
+Greedy elapsed time 56655400
+GA elapsed time 27703360000
+-----------------------------------------------------------------
+Running on file 10x12_20_2.00.txt
+Finished map 10x12_20_2.00.txt with greedy = 16 and GA = 19 and Optimal = 19
+Optimal result time: 1638300000
+Greedy elapsed time 103095200
+GA elapsed time 29949673801
+-----------------------------------------------------------------
+Running on file 10x12_25_0.50.txt
+Finished map 10x12_25_0.50.txt with greedy = 10 and GA = 10 and Optimal = 10
+Optimal result time: 2369911100
+Greedy elapsed time 14884700
+GA elapsed time 24683967301
+-----------------------------------------------------------------
+Running on file 10x12_25_1.00.txt
+Finished map 10x12_25_1.00.txt with greedy = 13 and GA = 13 and Optimal = 14
+Optimal result time: 7703259200
+Greedy elapsed time 131571301
+GA elapsed time 30941036300
+-----------------------------------------------------------------
+Running on file 10x12_25_2.00.txt
+Finished map 10x12_25_2.00.txt with greedy = 16 and GA = 21 and Optimal = 21
+Optimal result time: 10083684100
+Greedy elapsed time 193789499
+GA elapsed time 26897419400
+-----------------------------------------------------------------
+Running on file 10x12_50_0.50.txt
+Finished map 10x12_50_0.50.txt with greedy = 13 and GA = 13
+Greedy elapsed time 93482200
+GA elapsed time 26828077100
+-----------------------------------------------------------------
+Running on file 25x30_100_1.00.txt
+Finished map 25x30_100_1.00.txt with greedy = 12 and GA = 12
+Greedy elapsed time 75158500
+GA elapsed time 30818991101
+-----------------------------------------------------------------
+Running on file 25x30_100_2.00.txt
+Finished map 25x30_100_2.00.txt with greedy = 22 and GA = 22
+Greedy elapsed time 366936001
+GA elapsed time 36463366500
+-----------------------------------------------------------------
+Running on file 25x30_100_3.00.txt
+Finished map 25x30_100_3.00.txt with greedy = 35 and GA = 35
+Greedy elapsed time 557675301
+GA elapsed time 39665776400
+-----------------------------------------------------------------
+Running on file 25x30_10_2.00.txt
+Finished map 25x30_10_2.00.txt with greedy = 5 and GA = 5 and Optimal = 5
+Optimal result time: 195506700
+Greedy elapsed time 2292901
+GA elapsed time 22687608900
+-----------------------------------------------------------------
+Running on file 25x30_200_1.00.txt
+Finished map 25x30_200_1.00.txt with greedy = 21 and GA = 21
+Greedy elapsed time 379481699
+GA elapsed time 33029891501
+-----------------------------------------------------------------
+Running on file 25x30_200_2.00.txt
+Finished map 25x30_200_2.00.txt with greedy = 37 and GA = 37
+Greedy elapsed time 1601368199
+GA elapsed time 49080350799
+-----------------------------------------------------------------
+Running on file 25x30_200_3.00.txt
+Finished map 25x30_200_3.00.txt with greedy = 61 and GA = 61
+Greedy elapsed time 3609450300
+GA elapsed time 45344903700
+-----------------------------------------------------------------
+Running on file 25x30_25_1.00.txt
+Finished map 25x30_25_1.00.txt with greedy = 5 and GA = 7 and Optimal = 7
+Optimal result time: 65934601
+Greedy elapsed time 2807000
+GA elapsed time 22490274500
+-----------------------------------------------------------------
+Running on file 25x30_25_2.00.txt
+Finished map 25x30_25_2.00.txt with greedy = 10 and GA = 10 and Optimal = 10
+Optimal result time: 3025855900
+Greedy elapsed time 25657100
+GA elapsed time 29631683000
+-----------------------------------------------------------------
+Running on file 25x30_25_3.00.txt
+Finished map 25x30_25_3.00.txt with greedy = 10 and GA = 10 and Optimal = 10
+Optimal result time: 917855400
+Greedy elapsed time 14413300
+GA elapsed time 30643452300
+-----------------------------------------------------------------
+Running on file 25x30_300_1.00.txt
+Finished map 25x30_300_1.00.txt with greedy = 25 and GA = 25
+Greedy elapsed time 691098100
+GA elapsed time 39127074800
+-----------------------------------------------------------------
+Running on file 25x30_300_2.00.txt
+Finished map 25x30_300_2.00.txt with greedy = 51 and GA = 51
+Greedy elapsed time 3041249699
+GA elapsed time 56731208100
+-----------------------------------------------------------------
+Running on file 25x30_300_3.00.txt
+Finished map 25x30_300_3.00.txt with greedy = 83 and GA = 95
+Greedy elapsed time 10847624499
+GA elapsed time 65266355900
+-----------------------------------------------------------------
+Running on file 25x30_400_1.00.txt
+Finished map 25x30_400_1.00.txt with greedy = 31 and GA = 31
+Greedy elapsed time 1187019099
+GA elapsed time 38016474400
+-----------------------------------------------------------------
+Running on file 25x30_400_2.00.txt
+Finished map 25x30_400_2.00.txt with greedy = 63 and GA = 63
+Greedy elapsed time 7404251200
+GA elapsed time 61112814100
+-----------------------------------------------------------------
+Running on file 25x30_50_1.00.txt
+Finished map 25x30_50_1.00.txt with greedy = 10 and GA = 10
+Greedy elapsed time 14664400
+GA elapsed time 23698784201
+-----------------------------------------------------------------
+Running on file 25x30_50_2.00.txt
+Finished map 25x30_50_2.00.txt with greedy = 13 and GA = 13
+Greedy elapsed time 43662000
+GA elapsed time 27440676700
+-----------------------------------------------------------------
+Running on file 25x30_50_3.00.txt
+Finished map 25x30_50_3.00.txt with greedy = 21 and GA = 21
+Greedy elapsed time 131763999
+GA elapsed time 31414504100
+-----------------------------------------------------------------
+Running on file 30x36_100_1.00.txt
+Finished map 30x36_100_1.00.txt with greedy = 11 and GA = 11
+Greedy elapsed time 50015100
+GA elapsed time 26806138701
+-----------------------------------------------------------------
+Running on file 30x36_100_2.00.txt
+Finished map 30x36_100_2.00.txt with greedy = 21 and GA = 21
+Greedy elapsed time 141798901
+GA elapsed time 30890719300
+-----------------------------------------------------------------
+Running on file 30x36_100_3.00.txt
+Finished map 30x36_100_3.00.txt with greedy = 25 and GA = 25
+Greedy elapsed time 271375101
+GA elapsed time 31797750799
+-----------------------------------------------------------------
+Running on file 30x36_200_1.00.txt
+Finished map 30x36_200_1.00.txt with greedy = 16 and GA = 16
+Greedy elapsed time 123721700
+GA elapsed time 29966082700
+-----------------------------------------------------------------
+Running on file 30x36_200_2.00.txt
+Finished map 30x36_200_2.00.txt with greedy = 33 and GA = 33
+Greedy elapsed time 360885800
+GA elapsed time 37952463399
+-----------------------------------------------------------------
+Running on file 30x36_200_3.00.txt
+Finished map 30x36_200_3.00.txt with greedy = 45 and GA = 45
+Greedy elapsed time 2075375499
+GA elapsed time 54287504001
+-----------------------------------------------------------------
+Running on file 30x36_25_1.00.txt
+Finished map 30x36_25_1.00.txt with greedy = 6 and GA = 6 and Optimal = 6
+Optimal result time: 333103600
+Greedy elapsed time 5349300
+GA elapsed time 25558612100
+-----------------------------------------------------------------
+Running on file 30x36_25_2.00.txt
+Finished map 30x36_25_2.00.txt with greedy = 9 and GA = 9 and Optimal = 9
+Optimal result time: 1183583700
+Greedy elapsed time 10277400
+GA elapsed time 31414682001
+-----------------------------------------------------------------
+Running on file 30x36_25_3.00.txt
+Finished map 30x36_25_3.00.txt with greedy = 11 and GA = 11 and Optimal = 11
+Optimal result time: 7310790099
+Greedy elapsed time 18383100
+GA elapsed time 28626254800
+-----------------------------------------------------------------
+Running on file 30x36_400_1.00.txt
+Finished map 30x36_400_1.00.txt with greedy = 22 and GA = 22
+Greedy elapsed time 986424601
+GA elapsed time 37144530901
+-----------------------------------------------------------------
+Running on file 30x36_400_2.00.txt
+Finished map 30x36_400_2.00.txt with greedy = 54 and GA = 54
+Greedy elapsed time 2734923300
+GA elapsed time 52879211800
+-----------------------------------------------------------------
+Running on file 30x36_400_3.00.txt
+Finished map 30x36_400_3.00.txt with greedy = 84 and GA = 84
+Greedy elapsed time 11768336099
+GA elapsed time 91914180201
+-----------------------------------------------------------------
+Running on file 30x36_50_1.00.txt
+Finished map 30x36_50_1.00.txt with greedy = 8 and GA = 8
+Greedy elapsed time 6042800
+GA elapsed time 26985998001
+-----------------------------------------------------------------
+Running on file 30x36_50_2.00.txt
+Finished map 30x36_50_2.00.txt with greedy = 11 and GA = 11
+Greedy elapsed time 27193700
+GA elapsed time 30242737101
+-----------------------------------------------------------------
+Running on file 30x36_50_3.00.txt
+Finished map 30x36_50_3.00.txt with greedy = 17 and GA = 17
+Greedy elapsed time 76792800
+GA elapsed time 32976020499
+-----------------------------------------------------------------
+Running on file 42x50_100_1.00.txt
+Finished map 42x50_100_1.00.txt with greedy = 8 and GA = 8
+Greedy elapsed time 11043599
+GA elapsed time 29326688500
+-----------------------------------------------------------------
+Running on file 42x50_100_2.00.txt
+Finished map 42x50_100_2.00.txt with greedy = 14 and GA = 14
+Greedy elapsed time 46433899
+GA elapsed time 31107157601
+-----------------------------------------------------------------
+Running on file 42x50_100_3.00.txt
+Finished map 42x50_100_3.00.txt with greedy = 18 and GA = 18
+Greedy elapsed time 93101900
+GA elapsed time 31309748000
+-----------------------------------------------------------------
+Running on file 42x50_200_1.00.txt
+Finished map 42x50_200_1.00.txt with greedy = 13 and GA = 13
+Greedy elapsed time 49619100
+GA elapsed time 33584345800
+-----------------------------------------------------------------
+Running on file 42x50_200_2.00.txt
