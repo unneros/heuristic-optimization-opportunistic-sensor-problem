@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 
+import static java.lang.Math.max;
 import static java.lang.Math.pow;
 import com.google.ortools.sat.*;
 
@@ -38,9 +39,11 @@ public class Main {
         File dir = new File(args[0]);
         int m = Integer.parseInt(args[1]);
         int k = Integer.parseInt(args[2]);
+        int maxm = Integer.parseInt(args[3]);
+        int maxk = Integer.parseInt(args[4]);
 //        File dir = new File("C:\\Users\\duong\\IdeaProjects\\SensorOnBusProblem\\resource");
 
-        spreadsheetResultRecording(dir, m, k);
+        spreadsheetResultRecording(dir, m, k, maxm, maxk);
 
 //        List<String> fileNames = new ArrayList<>();
 //        List<Integer> mipResults = new ArrayList<>();
@@ -145,14 +148,14 @@ public class Main {
 
     }
 
-    public static List<String> getResultsList(File file, int m, int k) throws IOException {
+    public static List<String> getResultsList(BusMap busMap, int m, int k) throws IOException {
         List<String> result = new ArrayList<>();
-        result.add(file.getName());
+        result.add(busMap.fileName);
 
         long startime;
         long endTime;
-        BusMap busMap = parseTXT(file.getAbsolutePath());
-        busMap.busMapInitEA(busMap.radius);
+//        BusMap busMap = parseTXT(file.getAbsolutePath());
+//        busMap.busMapInitEA(busMap.radius);
 
         if (busMap.criticalSquares.size() <= 25) {
             startime = System.nanoTime();
@@ -187,14 +190,21 @@ public class Main {
         return result;
     }
 
-    public static void spreadsheetResultRecording(File path, int starting_m, int starting_k) throws IOException {
+    public static void spreadsheetResultRecording(File path, int starting_m, int starting_k, int max_m, int max_k) throws IOException {
         File dir = path;
+        List<BusMap> busMaps = new ArrayList<>();
+        for (File file : dir.listFiles()) {
+            BusMap busMap = parseTXT(file.getAbsolutePath());
+            busMap.busMapInitEA(busMap.radius);
+            busMaps.add(busMap);
+        }
         String[] titles = new String[] {"File name", "Optimal", "Optimal runtime", "Greedy", "Greedy runtime", "GA", "GA runtime", "SA", "SA runtime"};
 //        XSSFWorkbook workbook = new XSSFWorkbook();
 //        FileOutputStream out = new FileOutputStream(
 //                new File("./result.xlsx"));
-        for (int m = starting_m; m < 59; m++) {
-            for (int k = starting_k; k < 20; k++) {
+        for (int m = starting_m; m < max_m; m++) {
+            List<BusMap> busMapsTemp = new ArrayList<>(busMaps);
+            for (int k = starting_k; k < max_k; k++) {
                 PrintStream output = new PrintStream("./m" + m + "k"+ k +".txt");
                 System.setOut(output);
 //                XSSFSheet spreadsheet
@@ -208,13 +218,13 @@ public class Main {
                 System.out.format("%20s %17s %17s %17s %17s %17s %17s %17s %17s", titles[0], titles[1], titles[2], titles[3], titles[4], titles[5], titles[6], titles[7], titles[8]);
                 System.out.println();
 
-                for (File file : dir.listFiles()) {
+                for (BusMap busMap : busMapsTemp) {
 //                    row = spreadsheet.createRow(rowid++);
 //                    for (String result : getResultsList(file, m, k)) {
 ////                        Cell cell = row.createCell(cellid++);
 ////                        cell.setCellValue(result);
 //                    }
-                    List<String> results = getResultsList(file, m, k);
+                    List<String> results = getResultsList(busMap, m, k);
                     System.out.format("%20s %17s %17s %17s %17s %17s %17s %17s %17s", results.get(0),  results.get(1),  results.get(2),  results.get(3), results.get(4), results.get(5), results.get(6), results.get(7), results.get(8));
                     System.out.println();
                 }
@@ -729,6 +739,7 @@ public class Main {
 
     static BusMap parseTXT(String path) throws IOException {
         BusMap busMap = new BusMap();
+        busMap.fileName = new File(path).getName();
         String currentLine;
         BufferedReader bufferedReader = new BufferedReader(new FileReader(path));
         int lineIndex = 0;
@@ -774,6 +785,7 @@ public class Main {
             busMap.criticalSquares.add(new CriticalSquare(Integer.parseInt(splitString[0]), Integer.parseInt(splitString[1])));
         }
         busMap.uncoveredCriticalSquares = new HashSet<>(busMap.criticalSquares);
+        bufferedReader.close();
         return busMap;
     }
 }

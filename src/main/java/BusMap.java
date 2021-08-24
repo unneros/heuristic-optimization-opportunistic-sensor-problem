@@ -3,6 +3,7 @@ import java.util.*;
 import static java.lang.Math.pow;
 
 public class BusMap {
+    String fileName;
     Set<CriticalSquare> criticalSquares = new HashSet<>();
     Set<CriticalSquare> uncoveredCriticalSquares;
     List<BusRoute> busRoutes = new ArrayList<>();
