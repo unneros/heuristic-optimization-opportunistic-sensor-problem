@@ -2,7 +2,7 @@ import java.util.*;
 
 import static java.lang.Math.pow;
 
-public class BusMap {
+public class BusMap implements Cloneable {
     String fileName;
     Set<CriticalSquare> criticalSquares = new HashSet<>();
     Set<CriticalSquare> uncoveredCriticalSquares;
@@ -95,5 +95,21 @@ public class BusMap {
             }
             busRoutes.set(i, busRoute);
         }
+    }
+
+    @Override
+    public BusMap clone() {
+        BusMap newBusMap = new BusMap();
+        newBusMap.fileName = this.fileName;
+        newBusMap.criticalSquares = new HashSet<>(this.criticalSquares);
+        newBusMap.uncoveredCriticalSquares = new HashSet<>(this.uncoveredCriticalSquares);
+        newBusMap.busRoutes = new ArrayList<>();
+        for (BusRoute busRoute : this.busRoutes) {
+            newBusMap.busRoutes.add(busRoute.clone());
+        }
+        newBusMap.isInitialized = this.isInitialized;
+        newBusMap.radius = this.radius;
+
+        return newBusMap;
     }
 }

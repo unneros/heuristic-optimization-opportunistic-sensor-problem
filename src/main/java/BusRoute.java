@@ -6,7 +6,7 @@ import java.util.Set;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 
-public class BusRoute {
+public class BusRoute implements Cloneable {
     boolean chosen = false;
     int routeID;
     List<Coordinates> polyPoints = new ArrayList<>();
@@ -187,5 +187,15 @@ public class BusRoute {
                 criticalPoints.add(new CriticalPoint(true, criticalPoint2.x, criticalPoint2.y, i, criticalSquare));
             }
         }
+    }
+
+    public BusRoute clone() {
+        BusRoute newBusRoute = new BusRoute();
+        newBusRoute.routeID = this.routeID;
+        newBusRoute.criticalPoints = new ArrayList<>(this.criticalPoints);
+        newBusRoute.polyPoints = new ArrayList<>(this.polyPoints);
+        newBusRoute.chosen = false;
+
+        return newBusRoute;
     }
 }

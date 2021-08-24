@@ -41,10 +41,16 @@ public class Main {
         int k = Integer.parseInt(args[2]);
         int maxm = Integer.parseInt(args[3]);
         int maxk = Integer.parseInt(args[4]);
-//        File dir = new File("C:\\Users\\duong\\IdeaProjects\\SensorOnBusProblem\\resource");
+
 
         spreadsheetResultRecording(dir, m, k, maxm, maxk);
 
+
+//        File dir = new File("C:\\Users\\duong\\IdeaProjects\\SensorOnBusProblem\\resource small");
+//        int m = 15;
+//        int k = 2;
+//        int maxm = 17;
+//        int maxk = 30;
 //        List<String> fileNames = new ArrayList<>();
 //        List<Integer> mipResults = new ArrayList<>();
 //        List<Integer> greedyResults = new ArrayList<>();
@@ -178,7 +184,7 @@ public class Main {
         startime = System.nanoTime();
         List<Variant> initPopulation = new ArrayList<>();
         initPopulation.add(greedyAlgoResultVariant);
-        result.add(Integer.toString(solveSOBPGreedyEA(busMap, busMap.radius, m, k, 150, 6000,
+        result.add(Integer.toString(solveSOBPGreedyEA(busMap, busMap.radius, m, k, 150, 10000,
                 30, (float) 0.1, 0, (float) 0.46, initPopulation).size()));
         endTime = System.nanoTime();
         result.add(Double.toString((double) (endTime - startime)/1_000_000_000));
@@ -203,14 +209,17 @@ public class Main {
         String[] titles = new String[] {"File name", "Optimal", "Optimal runtime", "Greedy", "Greedy runtime", "GA", "GA runtime", "SA", "SA runtime"};
         for (int m = starting_m; m < max_m; m++) {
             for (int k = starting_k; k < max_k; k++) {
-                List<BusMap> busMapsTemp = new ArrayList<>(busMaps);
+                List<BusMap> busMapsTemp = new ArrayList<>();
+                for (BusMap busMap : busMaps) {
+                    busMapsTemp.add(busMap.clone());
+                }
                 PrintStream output = new PrintStream("./m" + m + "k"+ k +".txt");
                 System.setOut(output);
                 System.out.format("%20s %17s %17s %17s %17s %17s %17s %17s %17s", titles[0], titles[1], titles[2], titles[3], titles[4], titles[5], titles[6], titles[7], titles[8]);
                 System.out.println();
 
-                for (BusMap busMap : busMapsTemp) {
-                    List<String> results = getResultsList(busMap, m, k);
+                for (BusMap currentBusMap : busMapsTemp) {
+                    List<String> results = getResultsList(currentBusMap, m, k);
                     System.out.format("%20s %17s %17s %17s %17s %17s %17s %17s %17s", results.get(0),  results.get(1),  results.get(2),  results.get(3), results.get(4), results.get(5), results.get(6), results.get(7), results.get(8));
                     System.out.println();
                 }
