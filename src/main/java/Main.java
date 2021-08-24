@@ -36,22 +36,22 @@ public class Main {
         System.loadLibrary("jniortools");
     }
     public static void main(String[] args) throws IOException {
-        File dir = new File(args[0]);
-        int m = Integer.parseInt(args[1]);
-        int k = Integer.parseInt(args[2]);
-        int maxm = Integer.parseInt(args[3]);
-        int maxk = Integer.parseInt(args[4]);
-//        File dir = new File("C:\\Users\\duong\\IdeaProjects\\SensorOnBusProblem\\resource");
+//        File dir = new File(args[0]);
+//        int m = Integer.parseInt(args[1]);
+//        int k = Integer.parseInt(args[2]);
+//        int maxm = Integer.parseInt(args[3]);
+//        int maxk = Integer.parseInt(args[4]);
+        File dir = new File("C:\\Users\\duong\\IdeaProjects\\SensorOnBusProblem\\resource");
 
-        spreadsheetResultRecording(dir, m, k, maxm, maxk);
+//        spreadsheetResultRecording(dir, m, k, maxm, maxk);
 
-//        List<String> fileNames = new ArrayList<>();
-//        List<Integer> mipResults = new ArrayList<>();
-//        List<Integer> greedyResults = new ArrayList<>();
-//        List<Integer> gaResults = new ArrayList<>();
-//        List<Long> mipRuntime = new ArrayList<>();
-//        List<Long> greedyRuntime = new ArrayList<>();
-//        List<Long> gaRuntime = new ArrayList<>();
+        List<String> fileNames = new ArrayList<>();
+        List<Integer> mipResults = new ArrayList<>();
+        List<Integer> greedyResults = new ArrayList<>();
+        List<Integer> gaResults = new ArrayList<>();
+        List<Long> mipRuntime = new ArrayList<>();
+        List<Long> greedyRuntime = new ArrayList<>();
+        List<Long> gaRuntime = new ArrayList<>();
 //
 //
 //
@@ -121,30 +121,32 @@ public class Main {
 //                4, 4);
 
 
-//        int k = 4;
-//        int m = 5;
+        int k = 2;
+        int m = 15;
 //
-//        BusMap busMap = parseTXT("C:\\Users\\duong\\IdeaProjects\\SensorOnBusProblem\\resource\\30x36_200_3.00.txt");
-////        BusMap busMap2 = parseTXT("C:\\Users\\duong\\IdeaProjects\\SensorOnBusProblem\\resource\\30x36_200_3.00.txt");
-////        BusMap busMap3 = parseTXT("C:\\Users\\duong\\IdeaProjects\\SensorOnBusProblem\\resource\\30x36_200_3.00.txt");
+        BusMap busMap = parseTXT("C:\\Users\\duong\\IdeaProjects\\SensorOnBusProblem\\resource\\25x30_25_2.00.txt");
+        BusMap busMap2 = parseTXT("C:\\Users\\duong\\IdeaProjects\\SensorOnBusProblem\\resource\\25x30_25_2.00.txt");
+        BusMap busMap3 = parseTXT("C:\\Users\\duong\\IdeaProjects\\SensorOnBusProblem\\resource\\25x30_25_2.00.txt");
 //
-//        busMap.busMapInitEA(busMap.radius);
-//
-//
-////        System.out.println(solveSOBPMIP(busMap3, r, m, k));
-//        Variant greedyAlgoResultVariant = solveSOBP(busMap, busMap.radius, m, k);
-//        System.out.println(greedyAlgoResultVariant.coverableCriticalSquares.size());
-//
-//        System.out.println(solveSOBPSA(busMap, busMap.radius, m, k, 10000000, greedyAlgoResultVariant).coverableCriticalSquares.size());
-//
-//        // x' - x = C = k*x |
-//        List<Variant> initPopulation = new ArrayList<>();
-//        initPopulation.add(greedyAlgoResultVariant);
-//        System.out.println(solveSOBPGreedyEA(busMap, busMap.radius, m, k, 100, 4000,
-//                20, (float) 0.8, 400000, (float) 0.8, initPopulation).size());
-//
-//
-////        System.out.println(solveSOBPMIP(busMap, busMap.radius, m, k));
+        busMap.busMapInitEA(busMap.radius);
+        busMap2.busMapInitEA(busMap.radius);
+        busMap3.busMapInitEA(busMap.radius);
+
+
+        System.out.println(solveSOBPMIP(busMap, busMap.radius, m, k));
+        Variant greedyAlgoResultVariant = solveSOBP(busMap, busMap.radius, m, k);
+        System.out.println(greedyAlgoResultVariant.coverableCriticalSquares.size());
+
+        System.out.println(solveSOBPSA(busMap2, busMap2.radius, m, k, 10000000, greedyAlgoResultVariant).coverableCriticalSquares.size());
+
+        // x' - x = C = k*x |
+        List<Variant> initPopulation = new ArrayList<>();
+        initPopulation.add(greedyAlgoResultVariant);
+        System.out.println(solveSOBPGreedyEA(busMap3, busMap3.radius, m, k, 100, 4000,
+                20, (float) 0.8, 400000, (float) 0.8, initPopulation).size());
+
+
+//        System.out.println(solveSOBPMIP(busMap, busMap.radius, m, k));
 
     }
 
@@ -199,31 +201,15 @@ public class Main {
             busMaps.add(busMap);
         }
         String[] titles = new String[] {"File name", "Optimal", "Optimal runtime", "Greedy", "Greedy runtime", "GA", "GA runtime", "SA", "SA runtime"};
-//        XSSFWorkbook workbook = new XSSFWorkbook();
-//        FileOutputStream out = new FileOutputStream(
-//                new File("./result.xlsx"));
         for (int m = starting_m; m < max_m; m++) {
-            List<BusMap> busMapsTemp = new ArrayList<>(busMaps);
             for (int k = starting_k; k < max_k; k++) {
+                List<BusMap> busMapsTemp = new ArrayList<>(busMaps);
                 PrintStream output = new PrintStream("./m" + m + "k"+ k +".txt");
                 System.setOut(output);
-//                XSSFSheet spreadsheet
-//                        = workbook.createSheet("m = " + m + ", k = " + k);
-//                XSSFRow row = spreadsheet.createRow(rowid++);
-//                int cellid = 0;
-//                for (String title : titles) {
-////                    Cell cell = row.createCell(cellid++);
-////                    cell.setCellValue(title);
-//                }
                 System.out.format("%20s %17s %17s %17s %17s %17s %17s %17s %17s", titles[0], titles[1], titles[2], titles[3], titles[4], titles[5], titles[6], titles[7], titles[8]);
                 System.out.println();
 
                 for (BusMap busMap : busMapsTemp) {
-//                    row = spreadsheet.createRow(rowid++);
-//                    for (String result : getResultsList(file, m, k)) {
-////                        Cell cell = row.createCell(cellid++);
-////                        cell.setCellValue(result);
-//                    }
                     List<String> results = getResultsList(busMap, m, k);
                     System.out.format("%20s %17s %17s %17s %17s %17s %17s %17s %17s", results.get(0),  results.get(1),  results.get(2),  results.get(3), results.get(4), results.get(5), results.get(6), results.get(7), results.get(8));
                     System.out.println();
@@ -231,8 +217,6 @@ public class Main {
                 output.close();
             }
         }
-//        workbook.write(out);
-//        out.close();
     }
 
     public static Set<CriticalSquare> solveSOBPGreedyEA(BusMap busMap, float r, int m, int k,
