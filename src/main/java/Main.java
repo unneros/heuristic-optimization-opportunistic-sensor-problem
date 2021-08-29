@@ -220,7 +220,9 @@ public class Main {
                     }
                 }
             }
-            output.close();
+            if (output != null) {
+                output.close();
+            }
         }
 
 
