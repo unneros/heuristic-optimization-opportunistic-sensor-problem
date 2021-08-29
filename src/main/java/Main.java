@@ -200,26 +200,26 @@ public class Main {
             busMap.busMapInitEA(busMap.radius);
             busMaps.add(busMap);
         }
-        String[] titles = new String[] {"File name", "Optimal", "Optimal runtime", "Greedy", "Greedy runtime", "GA", "GA evaluation", "GA runtime", "SA", "SA evaluation", "SA runtime"};
-        for (int m = starting_m; m < max_m; m++) {
-            for (int k = starting_k; k < max_k; k++) {
-                List<BusMap> busMapsTemp = new ArrayList<>();
-                for (BusMap busMap : busMaps) {
-                    busMapsTemp.add(busMap.clone());
-                }
-                PrintStream output = new PrintStream("./result/m" + m + "k"+ k +".txt");
-                System.setOut(output);
-                System.out.format("%20s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s", titles[0], titles[1], titles[2], titles[3], titles[4], titles[5], titles[6], titles[7], titles[8], titles[9], titles[10]);
-                System.out.println();
+        String[] titles = new String[] {"m k", "Optimal", "Optimal runtime", "Greedy", "Greedy runtime", "GA", "GA evaluation", "GA runtime", "SA", "SA evaluation", "SA runtime"};
+        for (BusMap busMap : busMaps) {
+            PrintStream output = new PrintStream("./result/" + busMap.fileName + "_result");
+            System.setOut(output);
 
-                for (BusMap currentBusMap : busMapsTemp) {
+            System.out.format("%10s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s", titles[0], titles[1], titles[2], titles[3], titles[4], titles[5], titles[6], titles[7], titles[8], titles[9], titles[10]);
+            System.out.println();
+            for (int m = starting_m; m < max_m; m++) {
+                for (int k = starting_k; k < max_k; k++) {
+                    BusMap currentBusMap = busMap.clone();
+
                     List<String> results = getResultsList(currentBusMap, m, k);
-                    System.out.format("%20s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s", results.get(0),  results.get(1),  results.get(2),  results.get(3), results.get(4), results.get(5), results.get(6), results.get(7), results.get(8), results.get(9), results.get(10));
+                    System.out.format("%10s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s", "m" + m + "k" + k,  results.get(1),  results.get(2),  results.get(3), results.get(4), results.get(5), results.get(6), results.get(7), results.get(8), results.get(9), results.get(10));
                     System.out.println();
                 }
-                output.close();
             }
+            output.close();
         }
+
+
     }
 
     public static HeuristicResult solveSOBPGreedyEA(BusMap busMap, float r, int m, int k,
@@ -344,7 +344,7 @@ public class Main {
             //if evaluate(variant') > evaluate(variant) -> accept variant' as the variant
             // else if exp(delta/T) > rand(0,1) -> accept variant'
             double delta = neighbour.coverableCriticalSquares.size() - variant.coverableCriticalSquares.size();
-            if (delta > 0 || Math.exp(delta/T) > Math.random()) {
+            if (delta > 0 || Math.exp(delta/(T*2.5)) > Math.random()) {
                 variant = neighbour;
             }
             if (variant.coverableCriticalSquares.size() > result.bestFoundVariant.coverableCriticalSquares.size()) {
