@@ -10,25 +10,13 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
-import java.lang.reflect.Array;
 import java.math.BigInteger;
 import java.util.*;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
-
-import static java.lang.Math.max;
-import static java.lang.Math.pow;
-import com.google.ortools.sat.*;
 
 
 public class Main {
@@ -127,8 +115,8 @@ public class Main {
 //                4, 4);
 
 
-//        int k = 2;
-//        int m = 15;
+//        int k = 4;
+//        int m = 5;
 ////
 //        BusMap busMap = parseTXT("C:\\Users\\duong\\IdeaProjects\\SensorOnBusProblem\\resource\\25x30_25_2.00.txt");
 //        BusMap busMap2 = parseTXT("C:\\Users\\duong\\IdeaProjects\\SensorOnBusProblem\\resource\\25x30_25_2.00.txt");
@@ -138,18 +126,19 @@ public class Main {
 //        busMap2.busMapInitEA(busMap.radius);
 //        busMap3.busMapInitEA(busMap.radius);
 //
-//
 //        System.out.println(solveSOBPMIP(busMap, busMap.radius, m, k));
-//        Variant greedyAlgoResultVariant = solveSOBP(busMap, busMap.radius, m, k);
+//        Variant greedyAlgoResultVariant = solveSOBPGreedy(busMap, busMap.radius, m, k);
 //        System.out.println(greedyAlgoResultVariant.coverableCriticalSquares.size());
 //
-//        System.out.println(solveSOBPSA(busMap2, busMap2.radius, m, k, 10000000, greedyAlgoResultVariant).coverableCriticalSquares.size());
+//        HeuristicResult saResult = solveSOBPSA(busMap2, busMap2.radius, m, k, 10000000, greedyAlgoResultVariant);
+//        System.out.println(saResult.bestFoundVariant.coverableCriticalSquares.size());
 //
 //        // x' - x = C = k*x |
 //        List<Variant> initPopulation = new ArrayList<>();
 //        initPopulation.add(greedyAlgoResultVariant);
-//        System.out.println(solveSOBPGreedyEA(busMap3, busMap3.radius, m, k, 100, 4000,
-//                20, (float) 0.8, 400000, (float) 0.8, initPopulation).size());
+//        HeuristicResult gaResult = solveSOBPGreedyEA(busMap3, busMap3.radius, m, k, 100, 4000,
+//                20, (float) 0.8, 400000, (float) 0.8, initPopulation);
+//        System.out.println(gaResult.bestFoundVariant.coverableCriticalSquares.size());
 
 
 //        System.out.println(solveSOBPMIP(busMap, busMap.radius, m, k));
@@ -176,7 +165,7 @@ public class Main {
         }
 
         startime = System.nanoTime();
-        Variant greedyAlgoResultVariant = solveSOBP(busMap, busMap.radius, m, k);
+        Variant greedyAlgoResultVariant = solveSOBPGreedy(busMap, busMap.radius, m, k);
         result.add(Integer.toString(greedyAlgoResultVariant.coverableCriticalSquares.size()));
         endTime = System.nanoTime();
         result.add(Double.toString((double) (endTime - startime)/1_000_000_000));
@@ -184,14 +173,19 @@ public class Main {
         startime = System.nanoTime();
         List<Variant> initPopulation = new ArrayList<>();
         initPopulation.add(greedyAlgoResultVariant);
-        result.add(Integer.toString(solveSOBPGreedyEA(busMap, busMap.radius, m, k, 150, 10000,
-                30, (float) 0.1, 0, (float) 0.46, initPopulation).size()));
+        initPopulation.add(getGreedyStartPoint(busMap, busMap.radius, m, k));
+        HeuristicResult gaResult =solveSOBPGreedyEA(busMap, busMap.radius, m, k, 150, 10000,
+                30, (float) 0.1, 0, (float) 0.46, initPopulation);
+        result.add(Integer.toString(gaResult.bestFoundVariant.coverableCriticalSquares.size()));
+        result.add(Integer.toString(gaResult.bestFoundVariantEvaluation));
         endTime = System.nanoTime();
         result.add(Double.toString((double) (endTime - startime)/1_000_000_000));
 
         // SA
         startime = System.nanoTime();
-        result.add(Integer.toString(solveSOBPSA(busMap, busMap.radius, m, k, 10000000, greedyAlgoResultVariant).coverableCriticalSquares.size()));
+        HeuristicResult saResult = solveSOBPSA(busMap, busMap.radius, m, k, 10000000, greedyAlgoResultVariant);
+        result.add(Integer.toString(saResult.bestFoundVariant.coverableCriticalSquares.size()));
+        result.add(Integer.toString(saResult.bestFoundVariantEvaluation));
         endTime = System.nanoTime();
         result.add(Double.toString((double) (endTime - startime)/1_000_000_000));
 
@@ -206,21 +200,21 @@ public class Main {
             busMap.busMapInitEA(busMap.radius);
             busMaps.add(busMap);
         }
-        String[] titles = new String[] {"File name", "Optimal", "Optimal runtime", "Greedy", "Greedy runtime", "GA", "GA runtime", "SA", "SA runtime"};
+        String[] titles = new String[] {"File name", "Optimal", "Optimal runtime", "Greedy", "Greedy runtime", "GA", "GA evaluation", "GA runtime", "SA", "SA evaluation", "SA runtime"};
         for (int m = starting_m; m < max_m; m++) {
             for (int k = starting_k; k < max_k; k++) {
                 List<BusMap> busMapsTemp = new ArrayList<>();
                 for (BusMap busMap : busMaps) {
                     busMapsTemp.add(busMap.clone());
                 }
-                PrintStream output = new PrintStream("./m" + m + "k"+ k +".txt");
+                PrintStream output = new PrintStream("./result/m" + m + "k"+ k +".txt");
                 System.setOut(output);
-                System.out.format("%20s %17s %17s %17s %17s %17s %17s %17s %17s", titles[0], titles[1], titles[2], titles[3], titles[4], titles[5], titles[6], titles[7], titles[8]);
+                System.out.format("%20s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s", titles[0], titles[1], titles[2], titles[3], titles[4], titles[5], titles[6], titles[7], titles[8], titles[9], titles[10]);
                 System.out.println();
 
                 for (BusMap currentBusMap : busMapsTemp) {
                     List<String> results = getResultsList(currentBusMap, m, k);
-                    System.out.format("%20s %17s %17s %17s %17s %17s %17s %17s %17s", results.get(0),  results.get(1),  results.get(2),  results.get(3), results.get(4), results.get(5), results.get(6), results.get(7), results.get(8));
+                    System.out.format("%20s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s", results.get(0),  results.get(1),  results.get(2),  results.get(3), results.get(4), results.get(5), results.get(6), results.get(7), results.get(8), results.get(9), results.get(10));
                     System.out.println();
                 }
                 output.close();
@@ -228,13 +222,11 @@ public class Main {
         }
     }
 
-    public static Set<CriticalSquare> solveSOBPGreedyEA(BusMap busMap, float r, int m, int k,
+    public static HeuristicResult solveSOBPGreedyEA(BusMap busMap, float r, int m, int k,
                                       int numberOfVariants, int numberOfEvaluations,
                                       int numberOfSelectedParents, float bitFlipChance,
                                       float convergenceThreshold, float criticalPointChangeChance, List<Variant> initPopulation) {
-//        if (!busMap.isInitialized) {
-//            busMap.busMapInitEA(r);
-//        }
+        HeuristicResult result = new HeuristicResult();
 
         EAUtils eaUtils = new EAUtils();
         List<Variant> populations = eaUtils.generateRandomPopulation(busMap, numberOfVariants*3, m, k);
@@ -316,11 +308,17 @@ public class Main {
 //            System.out.println("Current evaluation: " + i + " best result: " + populations.get(0).coverableCriticalSquares.size());
             prevFitness = currentFitness;
             currentFitness = populations.get(0).coverableCriticalSquares.size();
+            if (populations.get(0).coverableCriticalSquares.size() > result.bestFoundVariant.coverableCriticalSquares.size()) {
+                result.bestFoundVariantEvaluation = i;
+            }
+            result.bestFoundVariant = populations.get(0);
+            result.evaluationResultProgress.add(populations.get(0).coverableCriticalSquares.size());
         }
-        return populations.get(0).coverableCriticalSquares;
+        return result;
     }
 
-    public static Variant solveSOBPSA(BusMap busMap, float r, int m, int k, int numberOfEvaluations, Variant initialVariant) {
+    public static HeuristicResult solveSOBPSA(BusMap busMap, float r, int m, int k, int numberOfEvaluations, Variant initialVariant) {
+        HeuristicResult result = new HeuristicResult();
         //starting point initialization
         Variant variant;
         EAUtils eaUtils = new EAUtils();
@@ -332,7 +330,7 @@ public class Main {
             variant.criticalPointGenes = new ArrayList<>(initialVariant.criticalPointGenes);
             eaUtils.evaluateVariant(variant, busMap);
         }
-        Variant bestVariant = variant;
+        result.bestFoundVariant = variant;
         for (int i = 0; i < numberOfEvaluations; i++) {
             //get neighbour variant' of variant
             Variant neighbour = eaUtils.getVariantNeighbour(variant);
@@ -349,12 +347,14 @@ public class Main {
             if (delta > 0 || Math.exp(delta/T) > Math.random()) {
                 variant = neighbour;
             }
-            if (variant.coverableCriticalSquares.size() > bestVariant.coverableCriticalSquares.size()) {
-                bestVariant = variant;
+            if (variant.coverableCriticalSquares.size() > result.bestFoundVariant.coverableCriticalSquares.size()) {
+                result.bestFoundVariant = variant;
+                result.bestFoundVariantEvaluation = i;
             }
 //            System.out.println("SA Running at evaluation number: " + i + " with result: " + variant.coverableCriticalSquares.size() + " and best result: " + bestVariant.coverableCriticalSquares.size());
+            result.evaluationResultProgress.add(variant.coverableCriticalSquares.size());
         }
-        return bestVariant;
+        return result;
     }
 
     public static Pair<Set<CriticalSquare>, BigInteger> largestSet(BusMap busMap, float r, int k, BusRoute busRoute) {
@@ -466,7 +466,7 @@ public class Main {
         return result;
     }
 
-    public static Variant solveSOBP(BusMap busMap, float r, int m, int k) {
+    public static Variant solveSOBPGreedy(BusMap busMap, float r, int m, int k) {
         Set<CriticalSquare> coveredCriticalSquares = new HashSet<>();
         Set<CriticalSquare> tempCoveredCriticalSquares;
         BigInteger tempCriticalPointGene = null;
@@ -521,6 +521,52 @@ public class Main {
 //        result.removeAll(coveredCriticalSquares);
 //
 //        busMap.uncoveredCriticalSquares = result;
+        return variant;
+    }
+
+    public static Variant getGreedyStartPoint(BusMap busMap, float r, int m, int k) {
+        Set<CriticalSquare> coveredCriticalSquares = new HashSet<>();
+        Set<CriticalSquare> tempCoveredCriticalSquares;
+        BigInteger tempCriticalPointGene = null;
+        List<BusRoute> chosenBusRoutes = new ArrayList<>();
+        List<Integer> chosenBusRoutesIndexes = new ArrayList<>();
+
+        Variant variant = new Variant();
+        EAUtils eaUtils = new EAUtils();
+        variant.busRouteGene = 0;
+        for (BusRoute busRoute : busMap.busRoutes) {
+            variant.criticalPointGenes.add(new BigInteger("0"));
+        }
+
+        Set<CriticalSquare> Y;
+        BigInteger X;
+        for (int i = 1; i <= m; i++) {
+            tempCoveredCriticalSquares = new HashSet<>();
+            int chosenBusRouteIndex = -1;
+            for (int j = 0; j < busMap.busRoutes.size(); j++) {
+                Y = new HashSet<>();
+                X = new BigInteger("0");
+                if (!busMap.busRoutes.get(j).chosen) {
+                    Pair<Set<CriticalSquare>, BigInteger> largestSetResult = largestSet(busMap, r, k, busMap.busRoutes.get(j));
+                    Y = largestSetResult.a;
+                    variant.criticalPointGenes.set(j, largestSetResult.b);
+                } else {
+                    Y = new HashSet<>();
+                }
+                if (Y.size() >= tempCoveredCriticalSquares.size()) {
+                    tempCoveredCriticalSquares = Y;
+                    chosenBusRouteIndex = j;
+                }
+            }
+            if (!chosenBusRoutesIndexes.contains(chosenBusRouteIndex)) {
+                variant.busRouteGene = variant.busRouteGene + (long) (Math.pow(2, chosenBusRouteIndex));
+            }
+            coveredCriticalSquares.addAll(tempCoveredCriticalSquares);
+            busMap.busRoutes.get(chosenBusRouteIndex).chosen = true;
+            chosenBusRoutes.add(busMap.busRoutes.get(chosenBusRouteIndex));
+            chosenBusRoutesIndexes.add(chosenBusRouteIndex);
+            variant.coverableCriticalSquares = coveredCriticalSquares;
+        }
         return variant;
     }
 
