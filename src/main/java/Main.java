@@ -318,7 +318,7 @@ public class Main {
                 result.bestFoundVariantEvaluation = i;
             }
             result.bestFoundVariant = populations.get(0);
-            result.evaluationResultProgress.add(populations.get(0).coverableCriticalSquares.size());
+//            result.evaluationResultProgress.add(populations.get(0).coverableCriticalSquares.size());
         }
         return result;
     }
@@ -358,7 +358,7 @@ public class Main {
                 result.bestFoundVariantEvaluation = i;
             }
 //            System.out.println("SA Running at evaluation number: " + i + " with result: " + variant.coverableCriticalSquares.size() + " and best result: " + bestVariant.coverableCriticalSquares.size());
-            result.evaluationResultProgress.add(variant.coverableCriticalSquares.size());
+//            result.evaluationResultProgress.add(variant.coverableCriticalSquares.size());
         }
         return result;
     }
