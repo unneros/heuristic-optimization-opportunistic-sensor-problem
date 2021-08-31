@@ -32,6 +32,13 @@ public class Main {
         String fileSet = args[5];
 
 
+//        File dir = new File("C:\\Users\\duong\\IdeaProjects\\SensorOnBusProblem\\resource");
+//        int m = 3;
+//        int k = 3;
+//        int maxm = 20;
+//        int maxk = 20;
+//        String fileSet = "30x36_400_2";
+
         spreadsheetResultRecording(dir, m, k, maxm, maxk, fileSet);
 
 
@@ -155,7 +162,7 @@ public class Main {
 //        BusMap busMap = parseTXT(file.getAbsolutePath());
 //        busMap.busMapInitEA(busMap.radius);
 
-        if (busMap.criticalSquares.size() <= 25) {
+        if (busMap.criticalSquares.size() <= 50) {
             startime = System.nanoTime();
             result.add(Integer.toString(solveSOBPMIP(busMap, busMap.radius, m, k)));
             endTime = System.nanoTime();
@@ -181,6 +188,9 @@ public class Main {
         result.add(Integer.toString(gaResult.bestFoundVariantEvaluation));
         endTime = System.nanoTime();
         result.add(Double.toString((double) (endTime - startime)/1_000_000_000));
+//        result.add("x");
+//        result.add("x");
+//        result.add("x");
 
         // SA
         startime = System.nanoTime();
@@ -188,7 +198,7 @@ public class Main {
         result.add(Integer.toString(saResult.bestFoundVariant.coverableCriticalSquares.size()));
         result.add(Integer.toString(saResult.bestFoundVariantEvaluation));
         endTime = System.nanoTime();
-        result.add(Double.toString((double) (endTime - startime)/1_000_000_000));
+        result.add(Double.toString((double) (endTime - startime)/1_200_000_000));
 
         return result;
     }
@@ -350,7 +360,7 @@ public class Main {
             //if evaluate(variant') > evaluate(variant) -> accept variant' as the variant
             // else if exp(delta/T) > rand(0,1) -> accept variant'
             double delta = neighbour.coverableCriticalSquares.size() - variant.coverableCriticalSquares.size();
-            if (delta > 0 || Math.exp(delta/(T*2.5)) > Math.random()) {
+            if (delta > 0 || Math.exp(delta/(T*1.2)) > Math.random()) {
                 variant = neighbour;
             }
             if (variant.coverableCriticalSquares.size() > result.bestFoundVariant.coverableCriticalSquares.size()) {
