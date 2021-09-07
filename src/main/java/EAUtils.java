@@ -227,19 +227,6 @@ public class EAUtils {
         List<Variant> result = new ArrayList<>();
         Collections.shuffle(population);
         int bracketIndex = 0;
-//        for (Variant variant : population) {
-//            if (bracketIndex < population.size() % bracketSize) {
-//                result.add(variant);
-//            }
-//            else if (variant.coverableCriticalSquares.size() > bestBracketVariant.coverableCriticalSquares.size() || (bracketIndex - (population.size() % bracketSize)) % bracketSize == 0) {
-//                bestBracketVariant = variant;
-//            }
-//            if ((bracketIndex  - (population.size() % bracketSize)) % (bracketSize - 1) == 0) {
-//                result.add(bestBracketVariant);
-//            }
-//            bracketIndex++;
-//        }
-
 
         for (Variant variant : population.subList(0, population.size() % bracketSize)) {
             result.add(variant);
@@ -259,6 +246,17 @@ public class EAUtils {
         return result;
     }
 
+    public List<Variant> saSelection(List<Variant> population, float temperature, float averageCoverableSize) {
+        List<Variant> result = new ArrayList<>();
+        for (Variant variant : population) {
+            float delta = variant.coverableCriticalSquares.size() - averageCoverableSize;
+            if (delta > 0 || Math.exp(delta/temperature) > Math.random()) {
+                result.add(variant);
+            }
+        }
+        return result;
+    }
+
     public Variant getVariantNeighbour(Variant variant) {
         Random rand = new Random();
         Variant neighbour = new Variant();
@@ -269,7 +267,7 @@ public class EAUtils {
         List<Integer> bitPositions1s = bitPositions.b;
         List<Integer> bitPositions0s = bitPositions.a;
 
-        if (rand.nextInt(100) <= 50) {
+        if (rand.nextInt(100) <= 25) {
             neighbour.busRouteGene = swapBits(neighbour.busRouteGene,
                     bitPositions1s.get(rand.nextInt(bitPositions1s.size())),
                     bitPositions0s.get(rand.nextInt(bitPositions0s.size())));

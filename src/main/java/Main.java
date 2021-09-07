@@ -32,14 +32,18 @@ public class Main {
         String fileSet = args[5];
 
 
-//        File dir = new File("C:\\Users\\duong\\IdeaProjects\\SensorOnBusProblem\\resource");
+//        File dir = new File("C:\\Users\\duong\\IdeaProjects\\SensorOnBusProblem\\resourceSG");
 //        int m = 3;
 //        int k = 3;
 //        int maxm = 20;
 //        int maxk = 20;
-//        String fileSet = "30x36_400_2";
+//        String fileSet = "SG15x20_100_1";
 
         spreadsheetResultRecording(dir, m, k, maxm, maxk, fileSet);
+//        BusMap busMap = parseTXT("C:\\Users\\duong\\IdeaProjects\\SensorOnBusProblem\\resource\\10x12_50_0.50.txt");
+//        busMap.busMapInitEA(busMap.radius);
+//        HeuristicResult saResult = solveSOBPSAGAHybrid(busMap, busMap.radius, m, k, 150, 1000,
+//                30, (float) 0.1, 0, (float) 0.1, new ArrayList<>());
 
 
 //        File dir = new File("C:\\Users\\duong\\IdeaProjects\\SensorOnBusProblem\\resource small");
@@ -198,7 +202,7 @@ public class Main {
         result.add(Integer.toString(saResult.bestFoundVariant.coverableCriticalSquares.size()));
         result.add(Integer.toString(saResult.bestFoundVariantEvaluation));
         endTime = System.nanoTime();
-        result.add(Double.toString((double) (endTime - startime)/1_200_000_000));
+        result.add(Double.toString((double) (endTime - startime)/1_000_000_000));
 
         return result;
     }
@@ -360,7 +364,7 @@ public class Main {
             //if evaluate(variant') > evaluate(variant) -> accept variant' as the variant
             // else if exp(delta/T) > rand(0,1) -> accept variant'
             double delta = neighbour.coverableCriticalSquares.size() - variant.coverableCriticalSquares.size();
-            if (delta > 0 || Math.exp(delta/(T*1.2)) > Math.random()) {
+            if (delta > 0 || Math.exp(delta/(T)) > Math.random()) {
                 variant = neighbour;
             }
             if (variant.coverableCriticalSquares.size() > result.bestFoundVariant.coverableCriticalSquares.size()) {
@@ -369,6 +373,108 @@ public class Main {
             }
 //            System.out.println("SA Running at evaluation number: " + i + " with result: " + variant.coverableCriticalSquares.size() + " and best result: " + bestVariant.coverableCriticalSquares.size());
 //            result.evaluationResultProgress.add(variant.coverableCriticalSquares.size());
+        }
+        return result;
+    }
+
+    public static HeuristicResult solveSOBPSAGAHybrid(BusMap busMap, float r, int m, int k,
+                                                    int numberOfVariants, int numberOfEvaluations,
+                                                    int numberOfSelectedParents, float bitFlipChance,
+                                                    float convergenceThreshold, float criticalPointChangeChance, List<Variant> initPopulation) {
+        HeuristicResult result = new HeuristicResult();
+
+        EAUtils eaUtils = new EAUtils();
+        List<Variant> populations = eaUtils.generateRandomPopulation(busMap, numberOfVariants*3, m, k);
+//        populations.add(solveSOBP(busMap, r, m, k));
+        populations.addAll(initPopulation);
+        eaUtils.evaluatePopulation(populations, busMap);
+        int convergingGenerationCounter = 0;
+        int prevFitness = 0;
+        int currentFitness = 0;
+        float trueBitFlipChance = bitFlipChance;
+        float trueCriticalPointChangeChance = criticalPointChangeChance;
+        for (int i = 0; i < numberOfEvaluations; i++) {
+//            // local search
+//            Variant bestVariant = populations.get(0);
+//            for (Variant variant : populations) {
+//                if (variant.coverableCriticalSquares.size() > bestVariant.coverableCriticalSquares.size()) {
+//                    bestVariant = variant;
+//                }
+//            }
+//            populations.addAll(eaUtils.localSearch(bestVariant, 10, 3, 100));
+
+//            // scale up mutation chance when converging
+//            if (prevFitness == currentFitness) {
+//                convergingGenerationCounter++;
+//            } else if (convergingGenerationCounter > 0){
+//                convergingGenerationCounter--;
+//            }
+//            if (convergingGenerationCounter > 0) {
+//                trueBitFlipChance = trueBitFlipChance + (1 - trueBitFlipChance)/(1 + convergenceThreshold/convergingGenerationCounter);
+//                trueCriticalPointChangeChance = trueCriticalPointChangeChance + (1 - trueCriticalPointChangeChance)/(1 + convergenceThreshold/convergingGenerationCounter);
+//            }
+
+            // select parents
+            Collections.sort(populations, (Variant a, Variant b) -> {
+                return b.coverableCriticalSquares.size() - a.coverableCriticalSquares.size();
+            });
+            List<Variant> selectedParents;
+            if (populations.size() < numberOfSelectedParents) {
+                selectedParents = new ArrayList<>(populations);
+            } else {
+                selectedParents = new ArrayList<>(populations.subList(0, numberOfSelectedParents));
+            }
+
+            // recombine parents
+            List<Variant> offsprings = new ArrayList<>();
+            int offspringIndex = 0;
+            for (Variant variantA : selectedParents) {
+                for (Variant variantB: selectedParents) {
+                    offsprings.add(eaUtils.variantCrossOver(variantA, variantB, m));
+                }
+            }
+
+            // mutate offsprings
+            for (int j = 0; j < offsprings.size(); j++) {
+                eaUtils.mutateVariant(offsprings.get(j), bitFlipChance, criticalPointChangeChance);
+            }
+
+            // evaluate offsprings
+            eaUtils.evaluatePopulation(offsprings, busMap);
+
+            Collections.sort(offsprings, (Variant variantA, Variant variantB) -> {
+                return variantB.coverableCriticalSquares.size() - variantA.coverableCriticalSquares.size();
+            });
+
+            // select individuals
+            populations.addAll(offsprings);
+
+            // SA Hybridation
+            int sum = 0;
+            float averageCoverableCriticalSquares;
+            for (Variant variant : populations) {
+                sum = sum + variant.coverableCriticalSquares.size();
+            }
+            averageCoverableCriticalSquares = ((float) sum)/populations.size();
+            float T = (1 - (float) (i + 1)/numberOfEvaluations);
+            populations = eaUtils.saSelection(populations, T, populations.get(0).coverableCriticalSquares.size());
+
+            List<Variant> randomlyChosenUnfitVariants = new ArrayList<>(populations);
+            Collections.shuffle(randomlyChosenUnfitVariants);
+            randomlyChosenUnfitVariants = randomlyChosenUnfitVariants.subList(0, numberOfVariants/10);
+            populations.addAll(randomlyChosenUnfitVariants);
+            populations = new ArrayList<>(new HashSet<>(populations));
+            Collections.sort(populations, (Variant variantA, Variant variantB) -> {
+                return variantB.coverableCriticalSquares.size() - variantA.coverableCriticalSquares.size();
+            });
+//            System.out.println("Current evaluation: " + i + " best result: " + populations.get(0).coverableCriticalSquares.size());
+            prevFitness = currentFitness;
+            currentFitness = populations.get(0).coverableCriticalSquares.size();
+            if (populations.get(0).coverableCriticalSquares.size() > result.bestFoundVariant.coverableCriticalSquares.size()) {
+                result.bestFoundVariantEvaluation = i;
+            }
+            result.bestFoundVariant = populations.get(0);
+//            result.evaluationResultProgress.add(populations.get(0).coverableCriticalSquares.size());
         }
         return result;
     }
