@@ -211,35 +211,31 @@ public class Main {
         File dir = path;
         List<BusMap> busMaps = new ArrayList<>();
         for (File file : dir.listFiles()) {
-            BusMap busMap = parseTXT(file.getAbsolutePath());
-            busMap.busMapInitEA(busMap.radius);
-            busMaps.add(busMap);
+            if (file.getAbsolutePath().contains(fileSet)) {
+                BusMap busMap = parseTXT(file.getAbsolutePath());
+                busMap.busMapInitEA(busMap.radius);
+                busMaps.add(busMap);
+            }
         }
         String[] titles = new String[] {"m k", "Optimal", "Optimal runtime", "Greedy", "Greedy runtime", "GA", "GA evaluation", "GA runtime", "SA", "SA evaluation", "SA runtime"};
         for (BusMap busMap : busMaps) {
             PrintStream output = null;
-            if (busMap.fileName.contains(fileSet)) {
-                output = new PrintStream("./result/" + busMap.fileName + "_result");
-                System.setOut(output);
+            output = new PrintStream("./result/" + busMap.fileName + "_result");
+            System.setOut(output);
 
-                System.out.format("%10s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s", titles[0], titles[1], titles[2], titles[3], titles[4], titles[5], titles[6], titles[7], titles[8], titles[9], titles[10]);
-                System.out.println();
-                for (int m = starting_m; m < max_m; m++) {
-                    for (int k = starting_k; k < max_k; k++) {
-                        BusMap currentBusMap = busMap.clone();
+            System.out.format("%10s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s", titles[0], titles[1], titles[2], titles[3], titles[4], titles[5], titles[6], titles[7], titles[8], titles[9], titles[10]);
+            System.out.println();
+            for (int m = starting_m; m < max_m; m++) {
+                for (int k = starting_k; k < max_k; k++) {
+                    BusMap currentBusMap = busMap.clone();
 
-                        List<String> results = getResultsList(currentBusMap, m, k);
-                        System.out.format("%10s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s", "m" + m + "k" + k,  results.get(1),  results.get(2),  results.get(3), results.get(4), results.get(5), results.get(6), results.get(7), results.get(8), results.get(9), results.get(10));
-                        System.out.println();
-                    }
+                    List<String> results = getResultsList(currentBusMap, m, k);
+                    System.out.format("%10s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s", "m" + m + "k" + k,  results.get(1),  results.get(2),  results.get(3), results.get(4), results.get(5), results.get(6), results.get(7), results.get(8), results.get(9), results.get(10));
+                    System.out.println();
                 }
             }
-            if (output != null) {
                 output.close();
-            }
         }
-
-
     }
 
     public static HeuristicResult solveSOBPGreedyEA(BusMap busMap, float r, int m, int k,
