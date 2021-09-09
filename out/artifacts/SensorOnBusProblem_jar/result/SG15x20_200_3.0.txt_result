@@ -1,0 +1,3 @@
+       m k           Optimal   Optimal runtime            Greedy    Greedy runtime                GA     GA evaluation        GA runtime                SA     SA evaluation        SA runtime
+      m2k2                 x                 x               102    1064.218953055               199                 0    1671.643997258               198              1605    5432.482367786
+      m2k3                 x                 x               134    1931.222984924               199                 0    2077.990517419               199              1564    5659.054752161
