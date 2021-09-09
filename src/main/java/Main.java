@@ -166,7 +166,7 @@ public class Main {
 //        BusMap busMap = parseTXT(file.getAbsolutePath());
 //        busMap.busMapInitEA(busMap.radius);
 
-        if (busMap.criticalSquares.size() <= 100) {
+        if (busMap.criticalSquares.size() <= 50) {
             startime = System.nanoTime();
             result.add(Integer.toString(solveSOBPMIP(busMap, busMap.radius, m, k)));
             endTime = System.nanoTime();
