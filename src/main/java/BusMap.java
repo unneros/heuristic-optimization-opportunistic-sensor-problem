@@ -24,6 +24,22 @@ public class BusMap implements Cloneable {
                 busRoutes.set(i, busRoute);
             }
         }
+
+        for (int i = 0; i < busRoutes.size(); i++) {
+            BusRoute busRoute = busRoutes.get(i);
+            List<CriticalPoint> mergedCriticalPoint = new ArrayList<>();
+            for (int m = 0; m < busRoute.criticalPoints.size() - 1; m++) {
+                CriticalPoint criticalPoint1 = busRoute.criticalPoints.get(m);
+                for (int n = m + 1; n < busRoute.criticalPoints.size(); n++) {
+                    CriticalPoint criticalPoint2 = busRoute.criticalPoints.get(n);
+                    if (criticalPoint1.isMergableWith(criticalPoint2) && m != n) {
+                        mergedCriticalPoint.add(criticalPoint1);
+                        mergedCriticalPoint.add(criticalPoint2);
+                    }
+                }
+            }
+            busRoutes.get(i).criticalPoints.removeAll(mergedCriticalPoint);
+        }
     }
 
     private void calculateCriticalPointsCoverableSquares() {

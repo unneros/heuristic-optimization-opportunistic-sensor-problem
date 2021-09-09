@@ -19,4 +19,19 @@ public class CriticalPoint extends Coordinates {
         this.x = x;
         this.y = y;
     }
+
+    public boolean isMergableWith(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        CriticalPoint target = (CriticalPoint) o;
+        return x == target.x && y == target.y && criticalSquare.equals(target.criticalSquare) && isBeginning != target.isBeginning
+                && Math.abs(target.polyLineOrder - polyLineOrder) == 1;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        CriticalPoint target = (CriticalPoint) o;
+        return x == target.x && y == target.y && criticalSquare.equals(target.criticalSquare) && isBeginning == target.isBeginning
+                && target.polyLineOrder == polyLineOrder;
+    }
 }

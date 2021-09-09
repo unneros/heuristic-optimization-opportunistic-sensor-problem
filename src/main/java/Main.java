@@ -33,10 +33,10 @@ public class Main {
 
 
 //        File dir = new File("C:\\Users\\duong\\IdeaProjects\\SensorOnBusProblem\\resourceSG");
-//        int m = 3;
-//        int k = 3;
+//        int m = 2;
+//        int k = 2;
 //        int maxm = 20;
-//        int maxk = 20;
+//        int maxk = 15;
 //        String fileSet = "SG15x20_100_1";
 
         spreadsheetResultRecording(dir, m, k, maxm, maxk, fileSet);
@@ -166,7 +166,7 @@ public class Main {
 //        BusMap busMap = parseTXT(file.getAbsolutePath());
 //        busMap.busMapInitEA(busMap.radius);
 
-        if (busMap.criticalSquares.size() <= 50) {
+        if (busMap.criticalSquares.size() <= 100) {
             startime = System.nanoTime();
             result.add(Integer.toString(solveSOBPMIP(busMap, busMap.radius, m, k)));
             endTime = System.nanoTime();
@@ -207,6 +207,78 @@ public class Main {
         return result;
     }
 
+    public static List<String> getResultsListNoInjection(BusMap busMap, int m, int k) throws IOException {
+        List<String> result = new ArrayList<>();
+        result.add(busMap.fileName);
+
+        long startime;
+        long endTime;
+
+
+        result.add("x");
+        result.add("x");
+
+
+        startime = System.nanoTime();
+        Variant greedyAlgoResultVariant = solveSOBPGreedy(busMap, busMap.radius, m, k);
+        result.add(Integer.toString(greedyAlgoResultVariant.coverableCriticalSquares.size()));
+        endTime = System.nanoTime();
+        result.add(Double.toString((double) (endTime - startime)/1_000_000_000));
+
+        startime = System.nanoTime();
+        List<Variant> initPopulation = new ArrayList<>();
+        HeuristicResult gaResult =solveSOBPGreedyEA(busMap, busMap.radius, m, k, 150, 10000,
+                30, (float) 0.1, 0, (float) 0.46, initPopulation);
+        result.add(Integer.toString(gaResult.bestFoundVariant.coverableCriticalSquares.size()));
+        result.add(Integer.toString(gaResult.bestFoundVariantEvaluation));
+        endTime = System.nanoTime();
+        result.add(Double.toString((double) (endTime - startime)/1_000_000_000));
+//        result.add("x");
+//        result.add("x");
+//        result.add("x");
+
+        // SA
+        startime = System.nanoTime();
+        HeuristicResult saResult = solveSOBPSA(busMap, busMap.radius, m, k, 10000000, new EAUtils().generateRandomPopulation(busMap, 1, m, k).get(0));
+        result.add(Integer.toString(saResult.bestFoundVariant.coverableCriticalSquares.size()));
+        result.add(Integer.toString(saResult.bestFoundVariantEvaluation));
+        endTime = System.nanoTime();
+        result.add(Double.toString((double) (endTime - startime)/1_000_000_000));
+
+        return result;
+    }
+
+    public static void spreadsheetResultRecordingNoInjection(File path, int starting_m, int starting_k, int max_m, int max_k, String fileSet) throws IOException {
+        File dir = path;
+        List<BusMap> busMaps = new ArrayList<>();
+        for (File file : dir.listFiles()) {
+            if (file.getAbsolutePath().contains(fileSet)) {
+                BusMap busMap = parseTXT(file.getAbsolutePath());
+                busMap.busMapInitEA(busMap.radius);
+                busMaps.add(busMap);
+            }
+        }
+        String[] titles = new String[] {"m k", "Optimal", "Optimal runtime", "Greedy", "Greedy runtime", "GA", "GA evaluation", "GA runtime", "SA", "SA evaluation", "SA runtime"};
+        for (BusMap busMap : busMaps) {
+            PrintStream output = null;
+            output = new PrintStream("./final/" + busMap.fileName + starting_m);
+            System.setOut(output);
+
+            System.out.format("%10s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s", titles[0], titles[1], titles[2], titles[3], titles[4], titles[5], titles[6], titles[7], titles[8], titles[9], titles[10]);
+            System.out.println();
+            for (int m = starting_m; m < max_m; m++) {
+                for (int k = starting_k; k < max_k; k++) {
+                    BusMap currentBusMap = busMap.clone();
+
+                    List<String> results = getResultsListNoInjection(currentBusMap, m, k);
+                    System.out.format("%10s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s", "m" + m + "k" + k,  results.get(1),  results.get(2),  results.get(3), results.get(4), results.get(5), results.get(6), results.get(7), results.get(8), results.get(9), results.get(10));
+                    System.out.println();
+                }
+            }
+            output.close();
+        }
+    }
+
     public static void spreadsheetResultRecording(File path, int starting_m, int starting_k, int max_m, int max_k, String fileSet) throws IOException {
         File dir = path;
         List<BusMap> busMaps = new ArrayList<>();
@@ -220,7 +292,7 @@ public class Main {
         String[] titles = new String[] {"m k", "Optimal", "Optimal runtime", "Greedy", "Greedy runtime", "GA", "GA evaluation", "GA runtime", "SA", "SA evaluation", "SA runtime"};
         for (BusMap busMap : busMaps) {
             PrintStream output = null;
-            output = new PrintStream("./result/" + busMap.fileName + "_result");
+            output = new PrintStream("./final/" + busMap.fileName + starting_m);
             System.setOut(output);
 
             System.out.format("%10s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s", titles[0], titles[1], titles[2], titles[3], titles[4], titles[5], titles[6], titles[7], titles[8], titles[9], titles[10]);
@@ -283,7 +355,7 @@ public class Main {
             if (populations.size() < numberOfSelectedParents) {
                 selectedParents = new ArrayList<>(populations);
             } else {
-                selectedParents = new ArrayList<>(populations.subList(0, numberOfSelectedParents));
+                selectedParents = eaUtils.tournamentSelection(populations, populations.size()/numberOfSelectedParents);
             }
 
             // recombine parents
