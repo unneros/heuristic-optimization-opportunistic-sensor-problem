@@ -184,8 +184,8 @@ public class Main {
 
         startime = System.nanoTime();
         List<Variant> initPopulation = new ArrayList<>();
-        HeuristicResult gaResult =solveSOBPGreedyEA(busMap, busMap.radius, m, k, 150, 10000,
-                30, (float) 0.1, 0, (float) 0.4, initPopulation);
+        HeuristicResult gaResult =solveSOBPGreedyEA(busMap, busMap.radius, m, k, 150, 60000,
+                30, (float) 0.06, 0, (float) 0.13, initPopulation);
         result.add(Integer.toString(gaResult.bestFoundVariant.coverableCriticalSquares.size()));
         result.add(Integer.toString(gaResult.bestFoundVariantEvaluation));
         endTime = System.nanoTime();
@@ -194,8 +194,8 @@ public class Main {
         startime = System.nanoTime();
         initPopulation.add(greedyAlgoResultVariant);
         initPopulation.add(getGreedyStartPoint(busMap, busMap.radius, m, k));
-        gaResult =solveSOBPGreedyEA(busMap, busMap.radius, m, k, 150, 10000,
-                30, (float) 0.1, 0, (float) 0.4, initPopulation);
+        gaResult =solveSOBPGreedyEA(busMap, busMap.radius, m, k, 150, 60000,
+                30, (float) 0.06, 0, (float) 0.13, initPopulation);
         result.add(Integer.toString(gaResult.bestFoundVariant.coverableCriticalSquares.size()));
         result.add(Integer.toString(gaResult.bestFoundVariantEvaluation));
         endTime = System.nanoTime();
@@ -342,6 +342,7 @@ public class Main {
         int currentFitness = 0;
         float trueBitFlipChance = bitFlipChance;
         float trueCriticalPointChangeChance = criticalPointChangeChance;
+        Random rand = new Random(System.currentTimeMillis());
         for (int i = 0; i < numberOfEvaluations; i++) {
 //            // local search
 //            Variant bestVariant = populations.get(0);
@@ -377,10 +378,16 @@ public class Main {
             // recombine parents
             List<Variant> offsprings = new ArrayList<>();
             int offspringIndex = 0;
-            for (Variant variantA : selectedParents) {
-                for (Variant variantB: selectedParents) {
-                    offsprings.add(eaUtils.variantCrossOver(variantA, variantB, m));
-                }
+//            for (Variant variantA : selectedParents) {
+//                for (Variant variantB: selectedParents) {
+//                    offsprings.add(eaUtils.variantCrossOver(variantA, variantB, m));
+//                }
+//            }
+            while (offsprings.size() <= 150) {
+                Variant parentA = selectedParents.get(rand.nextInt(selectedParents.size()));
+                Variant parentB = selectedParents.get(rand.nextInt(selectedParents.size()));
+
+                offsprings.add(eaUtils.variantCrossOver(parentA, parentB, m));
             }
 
             // mutate offsprings
