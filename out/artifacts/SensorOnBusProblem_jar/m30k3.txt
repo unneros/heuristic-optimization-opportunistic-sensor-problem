@@ -1,0 +1,1 @@
+           File name           Optimal   Optimal runtime            Greedy    Greedy runtime                GA        GA runtime                SA        SA runtime
