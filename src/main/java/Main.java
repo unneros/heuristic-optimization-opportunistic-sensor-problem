@@ -184,8 +184,8 @@ public class Main {
 
         startime = System.nanoTime();
         List<Variant> initPopulation = new ArrayList<>();
-        HeuristicResult gaResult =solveSOBPGreedyEA(busMap, busMap.radius, m, k, 150, 60000,
-                30, (float) 0.06, 0, (float) 0.13, initPopulation);
+        HeuristicResult gaResult =solveSOBPGreedyEA(busMap, busMap.radius, m, k, 150, 50000,
+                30, (float) 0.1, 0, (float) 0.18, initPopulation);
         result.add(Integer.toString(gaResult.bestFoundVariant.coverableCriticalSquares.size()));
         result.add(Integer.toString(gaResult.bestFoundVariantEvaluation));
         endTime = System.nanoTime();
@@ -194,8 +194,8 @@ public class Main {
         startime = System.nanoTime();
         initPopulation.add(greedyAlgoResultVariant);
         initPopulation.add(getGreedyStartPoint(busMap, busMap.radius, m, k));
-        gaResult =solveSOBPGreedyEA(busMap, busMap.radius, m, k, 150, 60000,
-                30, (float) 0.06, 0, (float) 0.13, initPopulation);
+        gaResult =solveSOBPGreedyEA(busMap, busMap.radius, m, k, 150, 50000,
+                30, (float) 0.1, 0, (float) 0.18, initPopulation);
         result.add(Integer.toString(gaResult.bestFoundVariant.coverableCriticalSquares.size()));
         result.add(Integer.toString(gaResult.bestFoundVariantEvaluation));
         endTime = System.nanoTime();
