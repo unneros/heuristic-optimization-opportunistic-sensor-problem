@@ -142,19 +142,66 @@ public class Main {
 //        Variant greedyAlgoResultVariant = solveSOBPGreedy(busMap, busMap.radius, m, k);
 //        System.out.println(greedyAlgoResultVariant.coverableCriticalSquares.size());
 //
-//        HeuristicResult saResult = solveSOBPSA(busMap2, busMap2.radius, m, k, 10000000, greedyAlgoResultVariant);
+//        HeuristicResult saResult = solveSOBPSA(busMap2, busMap2.radius, m, k, 10000000, null);
 //        System.out.println(saResult.bestFoundVariant.coverableCriticalSquares.size());
 //
 //        // x' - x = C = k*x |
 //        List<Variant> initPopulation = new ArrayList<>();
-//        initPopulation.add(greedyAlgoResultVariant);
 //        HeuristicResult gaResult = solveSOBPGreedyEA(busMap3, busMap3.radius, m, k, 100, 4000,
+//                20, (float) 0.8, 400000, (float) 0.8, initPopulation);
+//        System.out.println(gaResult.bestFoundVariant.coverableCriticalSquares.size());
+//
+//        initPopulation.add(greedyAlgoResultVariant);
+//        gaResult = solveSOBPGreedyEA(busMap3, busMap3.radius, m, k, 100, 4000,
 //                20, (float) 0.8, 400000, (float) 0.8, initPopulation);
 //        System.out.println(gaResult.bestFoundVariant.coverableCriticalSquares.size());
 
 
+
 //        System.out.println(solveSOBPMIP(busMap, busMap.radius, m, k));
 
+    }
+
+    public static List<String> getResultsListMIP(BusMap busMap, int m, int k) throws IOException {
+        List<String> result = new ArrayList<>();
+        result.add(busMap.fileName);
+
+        long startime;
+        long endTime;
+//        BusMap busMap = parseTXT(file.getAbsolutePath());
+//        busMap.busMapInitEA(busMap.radius);
+
+        if (busMap.criticalSquares.size() <= 50) {
+            startime = System.nanoTime();
+            result.add(Integer.toString(solveSOBPMIP(busMap, busMap.radius, m, k)));
+            endTime = System.nanoTime();
+            result.add(Double.toString((double) (endTime - startime)/1_000_000_000));
+        } else {
+            result.add("x");
+            result.add("x");
+        }
+
+        result.add("x");
+        result.add("x");
+
+        result.add("x");
+        result.add("x");
+        result.add("x");
+
+        result.add("x");
+        result.add("x");
+        result.add("x");
+
+
+        result.add("x");
+        result.add("x");
+        result.add("x");
+
+        result.add("x");
+        result.add("x");
+        result.add("x");
+
+        return result;
     }
 
     public static List<String> getResultsList(BusMap busMap, int m, int k) throws IOException {
@@ -288,6 +335,37 @@ public class Main {
 
                     List<String> results = getResultsListNoInjection(currentBusMap, m, k);
                     System.out.format("%10s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s", "m" + m + "k" + k,  results.get(1),  results.get(2),  results.get(3), results.get(4), results.get(5), results.get(6), results.get(7), results.get(8), results.get(9), results.get(10));
+                    System.out.println();
+                }
+            }
+            output.close();
+        }
+    }
+
+    public static void spreadsheetResultRecordingMIP(File path, int starting_m, int starting_k, int max_m, int max_k, String fileSet) throws IOException {
+        File dir = path;
+        List<BusMap> busMaps = new ArrayList<>();
+        for (File file : dir.listFiles()) {
+            if (file.getAbsolutePath().contains(fileSet)) {
+                BusMap busMap = parseTXT(file.getAbsolutePath());
+                busMap.busMapInitEA(busMap.radius);
+                busMaps.add(busMap);
+            }
+        }
+        String[] titles = new String[] {"m k", "Optimal", "Optimal runtime", "Greedy", "Greedy runtime", "GA", "GA evaluation", "GA runtime", "GAPI", "GAPI evaluation", "GAPI runtime", "SA", "SA evaluation", "SA runtime", "SAPI", "SAPI evaluation", "SAPI runtime"};
+        for (BusMap busMap : busMaps) {
+            PrintStream output = null;
+            output = new PrintStream("./final/"  + starting_m + "_" + busMap.fileName);
+            System.setOut(output);
+
+            System.out.format("%10s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s", titles[0], titles[1], titles[2], titles[3], titles[4], titles[5], titles[6], titles[7], titles[8], titles[9], titles[10], titles[11], titles[12], titles[13], titles[14], titles[15], titles[16]);
+            System.out.println();
+            for (int m = starting_m; m < max_m; m++) {
+                for (int k = starting_k; k < max_k; k++) {
+                    BusMap currentBusMap = busMap.clone();
+
+                    List<String> results = getResultsListMIP(currentBusMap, m, k);
+                    System.out.format("%10s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s", "m" + m + "k" + k,  results.get(1),  results.get(2),  results.get(3), results.get(4), results.get(5), results.get(6), results.get(7), results.get(8), results.get(9), results.get(10), results.get(11), results.get(12), results.get(13), results.get(14), results.get(15), results.get(16));
                     System.out.println();
                 }
             }
@@ -853,6 +931,7 @@ public class Main {
         model.maximize(new SumOfVariables(criticalSquaresVarList));
 
         CpSolver solver = new CpSolver();
+        solver.getParameters().setMaxTimeInSeconds(1000);
         CpSolverStatus status = solver.solve(model);
         if (status == CpSolverStatus.OPTIMAL) {
             int result = 0;
