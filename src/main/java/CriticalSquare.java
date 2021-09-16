@@ -15,4 +15,10 @@ public class CriticalSquare extends Coordinates implements Cloneable {
         newCriticalSquare.criticalPointsIndex = new ArrayList<>(criticalPointsIndex);
         return newCriticalSquare;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        CriticalSquare target = (CriticalSquare) o;
+        return x == target.x && y == target.y;
+    }
 }

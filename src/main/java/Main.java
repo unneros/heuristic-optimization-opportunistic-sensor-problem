@@ -162,6 +162,51 @@ public class Main {
 
     }
 
+    public static List<String> getResultsListGreedy(BusMap busMap, int m, int k) throws IOException {
+        List<String> result = new ArrayList<>();
+        result.add(busMap.fileName);
+
+        long startime;
+        long endTime;
+//        BusMap busMap = parseTXT(file.getAbsolutePath());
+//        busMap.busMapInitEA(busMap.radius);
+
+//        if (busMap.criticalSquares.size() <= 100) {
+//            startime = System.nanoTime();
+//            result.add(Integer.toString(solveSOBPMIP(busMap, busMap.radius, m, k)));
+//            endTime = System.nanoTime();
+//            result.add(Double.toString((double) (endTime - startime)/1_000_000_000));
+//        } else {
+            result.add("x");
+            result.add("x");
+//        }
+
+        startime = System.nanoTime();
+        Variant greedyAlgoResultVariant = solveSOBPGreedy(busMap, busMap.radius, m, k);
+        result.add(Integer.toString(greedyAlgoResultVariant.coverableCriticalSquares.size()));
+        endTime = System.nanoTime();
+        result.add(Double.toString((double) (endTime - startime)/1_000_000_000));
+
+        result.add("x");
+        result.add("x");
+        result.add("x");
+
+        result.add("x");
+        result.add("x");
+        result.add("x");
+
+
+        result.add("x");
+        result.add("x");
+        result.add("x");
+
+        result.add("x");
+        result.add("x");
+        result.add("x");
+
+        return result;
+    }
+
     public static List<String> getResultsListMIP(BusMap busMap, int m, int k) throws IOException {
         List<String> result = new ArrayList<>();
         result.add(busMap.fileName);
@@ -171,7 +216,7 @@ public class Main {
 //        BusMap busMap = parseTXT(file.getAbsolutePath());
 //        busMap.busMapInitEA(busMap.radius);
 
-        if (busMap.criticalSquares.size() <= 50) {
+        if (busMap.criticalSquares.size() <= 100) {
             startime = System.nanoTime();
             result.add(Integer.toString(solveSOBPMIP(busMap, busMap.radius, m, k)));
             endTime = System.nanoTime();
@@ -181,8 +226,11 @@ public class Main {
             result.add("x");
         }
 
-        result.add("x");
-        result.add("x");
+        startime = System.nanoTime();
+        Variant greedyAlgoResultVariant = solveSOBPGreedy(busMap, busMap.radius, m, k);
+        result.add(Integer.toString(greedyAlgoResultVariant.coverableCriticalSquares.size()));
+        endTime = System.nanoTime();
+        result.add(Double.toString((double) (endTime - startime)/1_000_000_000));
 
         result.add("x");
         result.add("x");
@@ -342,6 +390,37 @@ public class Main {
         }
     }
 
+    public static void spreadsheetResultRecordingGreedy(File path, int starting_m, int starting_k, int max_m, int max_k, String fileSet) throws IOException {
+        File dir = path;
+        List<BusMap> busMaps = new ArrayList<>();
+        for (File file : dir.listFiles()) {
+            if (file.getAbsolutePath().contains(fileSet)) {
+                BusMap busMap = parseTXT(file.getAbsolutePath());
+                busMap.busMapInitEA(busMap.radius);
+                busMaps.add(busMap);
+            }
+        }
+        String[] titles = new String[] {"m k", "Optimal", "Optimal runtime", "Greedy", "Greedy runtime", "GA", "GA evaluation", "GA runtime", "GAPI", "GAPI evaluation", "GAPI runtime", "SA", "SA evaluation", "SA runtime", "SAPI", "SAPI evaluation", "SAPI runtime"};
+        for (BusMap busMap : busMaps) {
+            PrintStream output = null;
+            output = new PrintStream("./final/Greedy_" + busMap.fileName);
+            System.setOut(output);
+
+            System.out.format("%10s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s", titles[0], titles[1], titles[2], titles[3], titles[4], titles[5], titles[6], titles[7], titles[8], titles[9], titles[10], titles[11], titles[12], titles[13], titles[14], titles[15], titles[16]);
+            System.out.println();
+            for (int m = starting_m; m < max_m; m++) {
+                for (int k = starting_k; k < max_k; k++) {
+                    BusMap currentBusMap = busMap.clone();
+
+                    List<String> results = getResultsListGreedy(currentBusMap, m, k);
+                    System.out.format("%10s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s", "m" + m + "k" + k,  results.get(1),  results.get(2),  results.get(3), results.get(4), results.get(5), results.get(6), results.get(7), results.get(8), results.get(9), results.get(10), results.get(11), results.get(12), results.get(13), results.get(14), results.get(15), results.get(16));
+                    System.out.println();
+                }
+            }
+            output.close();
+        }
+    }
+
     public static void spreadsheetResultRecordingMIP(File path, int starting_m, int starting_k, int max_m, int max_k, String fileSet) throws IOException {
         File dir = path;
         List<BusMap> busMaps = new ArrayList<>();
@@ -355,7 +434,7 @@ public class Main {
         String[] titles = new String[] {"m k", "Optimal", "Optimal runtime", "Greedy", "Greedy runtime", "GA", "GA evaluation", "GA runtime", "GAPI", "GAPI evaluation", "GAPI runtime", "SA", "SA evaluation", "SA runtime", "SAPI", "SAPI evaluation", "SAPI runtime"};
         for (BusMap busMap : busMaps) {
             PrintStream output = null;
-            output = new PrintStream("./final/"  + starting_m + "_" + busMap.fileName);
+            output = new PrintStream("./final/MIP"  + starting_m + "_" + busMap.fileName);
             System.setOut(output);
 
             System.out.format("%10s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s", titles[0], titles[1], titles[2], titles[3], titles[4], titles[5], titles[6], titles[7], titles[8], titles[9], titles[10], titles[11], titles[12], titles[13], titles[14], titles[15], titles[16]);
@@ -649,29 +728,6 @@ public class Main {
     }
 
     public static Pair<Set<CriticalSquare>, BigInteger> largestSet(BusMap busMap, float r, int k, BusRoute busRoute) {
-//        for (CriticalSquare criticalSquare : busMap.uncoveredCriticalSquares) {
-//            busRoute.calculateIntervals(criticalSquare, r);
-//        }
-//
-//        // for each critical points, calculate which critical square it can cover
-//        Collections.sort(busRoute.criticalPoints, (criticalPoint1, criticalPoint2) -> {
-//            if (criticalPoint1.polyLineOrder > criticalPoint2.polyLineOrder) {
-//                return Integer.MAX_VALUE;
-//            } else if (criticalPoint1.polyLineOrder == criticalPoint2.polyLineOrder) {
-//                if ((pow(criticalPoint1.x - busRoute.polyPoints.get(criticalPoint1.polyLineOrder).x, 2) + pow(criticalPoint1.y - busRoute.polyPoints.get(criticalPoint1.polyLineOrder).y, 2)
-//                        > pow(criticalPoint2.x - busRoute.polyPoints.get(criticalPoint2.polyLineOrder).x, 2) + pow(criticalPoint2.y - busRoute.polyPoints.get(criticalPoint1.polyLineOrder).y, 2))) {
-//                    return 1;
-//                } else if ((pow(criticalPoint1.x - busRoute.polyPoints.get(criticalPoint1.polyLineOrder).x, 2) + pow(criticalPoint1.y - busRoute.polyPoints.get(criticalPoint1.polyLineOrder).y, 2)
-//                        == pow(criticalPoint2.x - busRoute.polyPoints.get(criticalPoint2.polyLineOrder).x, 2) + pow(criticalPoint2.y - busRoute.polyPoints.get(criticalPoint1.polyLineOrder).y, 2))){
-//                    return criticalPoint1.isBeginning ? -1 : 1;
-//                } else {
-//                    return -1;
-//                }
-//            } else {
-//                return Integer.MIN_VALUE;
-//            }
-//        });
-
         Set<CriticalSquare> coveredCriticalSquares = new HashSet<>(busMap.criticalSquares);
         coveredCriticalSquares.removeAll(busMap.uncoveredCriticalSquares);
 
@@ -718,6 +774,7 @@ public class Main {
                         Set<CriticalSquare> tempValCQSet = new HashSet<>();
                         if (f_ij[u][j - 1] == 0) {
                             tempValCQSet = new HashSet<>(observableCrticalSquare.get(u));
+                            tempValCQSet.removeAll(coveredCriticalSquares);
                             if (i != 0) {
                                 tempValCQSet.removeAll(observableCrticalSquare.get(i));
                             }
@@ -725,6 +782,7 @@ public class Main {
                             tempCriticalPointGene = tempCriticalPointGene.flipBit(u);
                         } else {
                             tempValCQSet = new HashSet<>(observableCrticalSquare.get(u));
+                            tempValCQSet.removeAll(coveredCriticalSquares);
                             if (i != 0) {
                                 tempValCQSet.removeAll(observableCrticalSquare.get(i));
                             }
