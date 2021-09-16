@@ -39,7 +39,7 @@ public class Main {
 //        int maxk = 15;
 //        String fileSet = "SG15x20_100_1";
 
-        spreadsheetResultRecording(dir, m, k, maxm, maxk, fileSet);
+        spreadsheetResultRecordingGAInject(dir, m, k, maxm, maxk, fileSet);
 //        BusMap busMap = parseTXT("C:\\Users\\duong\\IdeaProjects\\SensorOnBusProblem\\resource\\10x12_50_0.50.txt");
 //        busMap.busMapInitEA(busMap.radius);
 //        HeuristicResult saResult = solveSOBPSAGAHybrid(busMap, busMap.radius, m, k, 150, 1000,
@@ -252,6 +252,51 @@ public class Main {
         return result;
     }
 
+    public static List<String> getResultsListGAInject(BusMap busMap, int m, int k) throws IOException {
+        List<String> result = new ArrayList<>();
+        result.add(busMap.fileName);
+
+        long startime;
+        long endTime;
+//        BusMap busMap = parseTXT(file.getAbsolutePath());
+//        busMap.busMapInitEA(busMap.radius);
+
+        result.add("x");
+        result.add("x");
+
+        Variant greedyAlgoResultVariant = solveSOBPGreedy(busMap, busMap.radius, m, k);
+        result.add("x");
+        result.add("x");
+
+
+        result.add("x");
+        result.add("x");
+        result.add("x");
+
+        List<Variant> initPopulation = new ArrayList<>();
+        startime = System.nanoTime();
+        initPopulation.add(greedyAlgoResultVariant);
+        initPopulation.add(getGreedyStartPoint(busMap, busMap.radius, m, k));
+        HeuristicResult gaResult =solveSOBPGreedyEA(busMap, busMap.radius, m, k, 120, 50000,
+                25, (float) 0.1, 0, (float) 0.2, initPopulation);
+        result.add(Integer.toString(gaResult.bestFoundVariant.coverableCriticalSquares.size()));
+        result.add(Integer.toString(gaResult.bestFoundVariantEvaluation));
+        endTime = System.nanoTime();
+        result.add(Double.toString((double) (endTime - startime)/1_000_000_000));
+
+        // SA
+        result.add("x");
+        result.add("x");
+        result.add("x");
+
+        // SA
+        result.add("x");
+        result.add("x");
+        result.add("x");
+
+        return result;
+    }
+
     public static List<String> getResultsList(BusMap busMap, int m, int k) throws IOException {
         List<String> result = new ArrayList<>();
         result.add(busMap.fileName);
@@ -444,6 +489,37 @@ public class Main {
                     BusMap currentBusMap = busMap.clone();
 
                     List<String> results = getResultsListMIP(currentBusMap, m, k);
+                    System.out.format("%10s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s", "m" + m + "k" + k,  results.get(1),  results.get(2),  results.get(3), results.get(4), results.get(5), results.get(6), results.get(7), results.get(8), results.get(9), results.get(10), results.get(11), results.get(12), results.get(13), results.get(14), results.get(15), results.get(16));
+                    System.out.println();
+                }
+            }
+            output.close();
+        }
+    }
+
+    public static void spreadsheetResultRecordingGAInject(File path, int starting_m, int starting_k, int max_m, int max_k, String fileSet) throws IOException {
+        File dir = path;
+        List<BusMap> busMaps = new ArrayList<>();
+        for (File file : dir.listFiles()) {
+            if (file.getAbsolutePath().contains(fileSet)) {
+                BusMap busMap = parseTXT(file.getAbsolutePath());
+                busMap.busMapInitEA(busMap.radius);
+                busMaps.add(busMap);
+            }
+        }
+        String[] titles = new String[] {"m k", "Optimal", "Optimal runtime", "Greedy", "Greedy runtime", "GA", "GA evaluation", "GA runtime", "GAPI", "GAPI evaluation", "GAPI runtime", "SA", "SA evaluation", "SA runtime", "SAPI", "SAPI evaluation", "SAPI runtime"};
+        for (BusMap busMap : busMaps) {
+            PrintStream output = null;
+            output = new PrintStream("./final/GAPI_"  + starting_m + busMap.fileName);
+            System.setOut(output);
+
+            System.out.format("%10s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s", titles[0], titles[1], titles[2], titles[3], titles[4], titles[5], titles[6], titles[7], titles[8], titles[9], titles[10], titles[11], titles[12], titles[13], titles[14], titles[15], titles[16]);
+            System.out.println();
+            for (int m = starting_m; m < max_m; m++) {
+                for (int k = starting_k; k < max_k; k++) {
+                    BusMap currentBusMap = busMap.clone();
+
+                    List<String> results = getResultsListGAInject(currentBusMap, m, k);
                     System.out.format("%10s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s", "m" + m + "k" + k,  results.get(1),  results.get(2),  results.get(3), results.get(4), results.get(5), results.get(6), results.get(7), results.get(8), results.get(9), results.get(10), results.get(11), results.get(12), results.get(13), results.get(14), results.get(15), results.get(16));
                     System.out.println();
                 }
