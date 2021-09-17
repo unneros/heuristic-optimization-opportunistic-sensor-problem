@@ -32,16 +32,31 @@ public class Main {
         String fileSet = args[5];
 
 
-//        File dir = new File("C:\\Users\\duong\\IdeaProjects\\SensorOnBusProblem\\resourceSG");
-//        int m = 2;
-//        int k = 2;
+//        File dir = new FileReader("C:\\Users\\duong\\IdeaProjects\\SensorOnBusProblem\\resourceSG");
+//        int m = 17;
+//        int k = 12;
 //        int maxm = 20;
 //        int maxk = 15;
 //        String fileSet = "SG15x20_100_1";
 
-        spreadsheetResultRecordingGAInject(dir, m, k, maxm, maxk, fileSet);
-//        BusMap busMap = parseTXT("C:\\Users\\duong\\IdeaProjects\\SensorOnBusProblem\\resource\\10x12_50_0.50.txt");
+        spreadsheetResultRecordingSAInject(dir, m, k, maxm, maxk, fileSet);
+//        BusMap busMap = parseTXT("C:\\Users\\duong\\IdeaProjects\\SensorOnBusProblem\\resource\\42x50_200_2.00.txt");
 //        busMap.busMapInitEA(busMap.radius);
+//        List<Variant> initPopulation = new ArrayList<>();
+//        HeuristicResult gaResult =solveSOBPGreedyEA(busMap, busMap.radius, m, k, 120, 50000,
+//                25, (float) 0.1, 0, (float) 0.2, initPopulation);
+//        PrintStream ps = new PrintStream("GAProcess_" + busMap.fileName);
+//        System.setOut(ps);
+//        for (Integer num : gaResult.evaluationResultProgress) {
+//            System.out.print(num + ",");
+//        }
+//        System.out.println();
+//        for (Integer num : gaResult.evaluationResultProgressWorst) {
+//            System.out.print(num + ",");
+//        }
+//        System.out.println();
+//        System.out.println(gaResult.bestFoundVariantEvaluation);
+//        System.out.println(gaResult.bestFoundVariant.coverableCriticalSquares.size());
 //        HeuristicResult saResult = solveSOBPSAGAHybrid(busMap, busMap.radius, m, k, 150, 1000,
 //                30, (float) 0.1, 0, (float) 0.1, new ArrayList<>());
 
@@ -297,6 +312,46 @@ public class Main {
         return result;
     }
 
+    public static List<String> getResultsListSAPI(BusMap busMap, int m, int k) throws IOException {
+        List<String> result = new ArrayList<>();
+        result.add(busMap.fileName);
+
+        long startime;
+        long endTime;
+//        BusMap busMap = parseTXT(file.getAbsolutePath());
+//        busMap.busMapInitEA(busMap.radius);
+
+        result.add("x");
+        result.add("x");
+
+
+        Variant greedyAlgoResultVariant = solveSOBPGreedy(busMap, busMap.radius, m, k);
+        result.add("x");
+        result.add("x");
+
+        result.add("x");
+        result.add("x");
+        result.add("x");
+
+        result.add("x");
+        result.add("x");
+        result.add("x");
+
+        result.add("x");
+        result.add("x");
+        result.add("x");
+
+        // SA
+        startime = System.nanoTime();
+        HeuristicResult saResult = solveSOBPSA(busMap, busMap.radius, m, k, 5000000, greedyAlgoResultVariant);
+        result.add(Integer.toString(saResult.bestFoundVariant.coverableCriticalSquares.size()));
+        result.add(Integer.toString(saResult.bestFoundVariantEvaluation));
+        endTime = System.nanoTime();
+        result.add(Double.toString((double) (endTime - startime)/1_000_000_000));
+
+        return result;
+    }
+
     public static List<String> getResultsList(BusMap busMap, int m, int k) throws IOException {
         List<String> result = new ArrayList<>();
         result.add(busMap.fileName);
@@ -497,6 +552,37 @@ public class Main {
         }
     }
 
+    public static void spreadsheetResultRecordingSAInject(File path, int starting_m, int starting_k, int max_m, int max_k, String fileSet) throws IOException {
+        File dir = path;
+        List<BusMap> busMaps = new ArrayList<>();
+        for (File file : dir.listFiles()) {
+            if (file.getAbsolutePath().contains(fileSet)) {
+                BusMap busMap = parseTXT(file.getAbsolutePath());
+                busMap.busMapInitEA(busMap.radius);
+                busMaps.add(busMap);
+            }
+        }
+        String[] titles = new String[] {"m k", "Optimal", "Optimal runtime", "Greedy", "Greedy runtime", "GA", "GA evaluation", "GA runtime", "GAPI", "GAPI evaluation", "GAPI runtime", "SA", "SA evaluation", "SA runtime", "SAPI", "SAPI evaluation", "SAPI runtime"};
+        for (BusMap busMap : busMaps) {
+            PrintStream output = null;
+            output = new PrintStream("./final/SAPI_"  + starting_m + busMap.fileName);
+            System.setOut(output);
+
+            System.out.format("%10s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s", titles[0], titles[1], titles[2], titles[3], titles[4], titles[5], titles[6], titles[7], titles[8], titles[9], titles[10], titles[11], titles[12], titles[13], titles[14], titles[15], titles[16]);
+            System.out.println();
+            for (int m = starting_m; m < max_m; m++) {
+                for (int k = starting_k; k < max_k; k++) {
+                    BusMap currentBusMap = busMap.clone();
+
+                    List<String> results = getResultsListSAPI(currentBusMap, m, k);
+                    System.out.format("%10s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s %17s", "m" + m + "k" + k,  results.get(1),  results.get(2),  results.get(3), results.get(4), results.get(5), results.get(6), results.get(7), results.get(8), results.get(9), results.get(10), results.get(11), results.get(12), results.get(13), results.get(14), results.get(15), results.get(16));
+                    System.out.println();
+                }
+            }
+            output.close();
+        }
+    }
+
     public static void spreadsheetResultRecordingGAInject(File path, int starting_m, int starting_k, int max_m, int max_k, String fileSet) throws IOException {
         File dir = path;
         List<BusMap> busMaps = new ArrayList<>();
@@ -656,7 +742,13 @@ public class Main {
                 result.bestFoundVariantEvaluation = i;
             }
             result.bestFoundVariant = populations.get(0);
-//            result.evaluationResultProgress.add(populations.get(0).coverableCriticalSquares.size());
+            result.evaluationResultProgress.add(populations.get(0).coverableCriticalSquares.size());
+            int average = 0;
+            for (Variant variant : populations) {
+                average = average + variant.coverableCriticalSquares.size();
+            }
+            average = average/populations.size();
+            result.evaluationResultProgressWorst.add(average);
         }
         return result;
     }
@@ -688,7 +780,7 @@ public class Main {
             //if evaluate(variant') > evaluate(variant) -> accept variant' as the variant
             // else if exp(delta/T) > rand(0,1) -> accept variant'
             double delta = neighbour.coverableCriticalSquares.size() - variant.coverableCriticalSquares.size();
-            if (delta > 0 || Math.exp(delta/(T)) > Math.random()) {
+            if (delta > 0 || Math.exp(delta/(2.1*T)) > Math.random()) {
                 variant = neighbour;
             }
             if (variant.coverableCriticalSquares.size() > result.bestFoundVariant.coverableCriticalSquares.size()) {
