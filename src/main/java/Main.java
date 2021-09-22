@@ -40,7 +40,7 @@ public class Main {
 //        String fileSet = "SG15x20_100_1";
 
 //        spreadsheetResultRecordingSAInject(dir, m, k, maxm, maxk, fileSet);
-        spreadsheetResultRecordingGAInject(dir, m, k, maxm, maxk, fileSet);
+        spreadsheetResultRecording(dir, m, k, maxm, maxk, fileSet);
 //        BusMap busMap = parseTXT("C:\\Users\\duong\\IdeaProjects\\SensorOnBusProblem\\resource\\42x50_200_2.00.txt");
 //        busMap.busMapInitEA(busMap.radius);
 //        List<Variant> initPopulation = new ArrayList<>();
